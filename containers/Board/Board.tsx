@@ -8,8 +8,8 @@ import Square from '../../common/components/Square';
 const useStyles = makeStyles(() => ({
   section: {
     position: 'relative',
-    height: 600,
-    width: 600,
+    height: 750,
+    width: 750,
   },
   square: {
     position: 'absolute',
@@ -18,14 +18,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface Piece {
-  color?: number;
-  type?: number;
+export interface PieceProps {
+  color?: number | null;
+  type?: number | null;
 }
 
 interface BoardSquare {
   color: number;
-  piece: Piece;
+  piece: PieceProps;
 }
 
 interface BoardProps {
@@ -51,13 +51,15 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
   const { position } = props;
 
   const mapFile = mapIndexed((square: BoardSquare, i: number, j: number): JSX.Element => {
-    const color = square.color === 1 ? 'white' : 'black';
+    const { piece, color } = square;
     const style = {
-      left: `${12.5 * i}%`,
-      top: `${100 - (12.5 * (j + 1))}%`,
+      top: `${100 - (12.5 * (i + 1))}%`,
+      left: `${12.5 * j}%`,
     };
     const key = `square.${i}.${j}`;
-    return createElement(Square, { key, color, style });
+    return createElement(Square, {
+      key, color, piece, style,
+    });
   });
 
   const mapPosition = mapIndexed(
