@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core';
 import Piece from '../Piece';
-import { PieceProps } from '../../../containers/Board/Board';
+import { BoardPiece } from '../../../containers/Board/Board';
 
 const useStyles = makeStyles((theme: Theme) => ({
   square: {
@@ -20,10 +20,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface SquareProps {
+type SquareProps = {
   style: CSSProperties;
   color: number;
-  piece: PieceProps;
+  piece: BoardPiece;
+  file: number;
+  rank: number;
 }
 
 const displayName = 'SquareComponent';
@@ -38,10 +40,18 @@ const propTypes = {
     type: PropTypes.oneOf([0, 1, 2, 3, 4, 5]),
     color: PropTypes.oneOf([1, 2]),
   }).isRequired,
+  file: PropTypes.number.isRequired,
+  rank: PropTypes.number.isRequired,
 };
 
 const Square: FunctionComponent<SquareProps> = (props: SquareProps) => {
-  const { style, color, piece } = props;
+  const {
+    style,
+    color,
+    piece,
+    file,
+    rank,
+  } = props;
   const classes = useStyles();
   const className = classNames({
     [classes.square]: true,
@@ -51,7 +61,12 @@ const Square: FunctionComponent<SquareProps> = (props: SquareProps) => {
 
   return (
     <div className={className} style={style}>
-      <Piece color={piece.color} type={piece.type} />
+      <Piece
+        color={piece.color}
+        type={piece.type}
+        file={file}
+        rank={rank}
+      />
     </div>
   );
 };

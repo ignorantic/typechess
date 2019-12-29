@@ -1,6 +1,8 @@
 // import libs
 import React, { createElement, FunctionComponent } from 'react';
 import PropTypes from 'prop-types';
+import { DndProvider } from 'react-dnd';
+import Backend from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/styles';
 import { addIndex, map } from 'ramda';
 import Square from '../../common/components/Square';
@@ -18,17 +20,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export interface PieceProps {
+export type BoardPiece = {
   color?: number | null;
   type?: number | null;
 }
 
-interface BoardSquare {
+export type BoardSquare = {
   color: number;
-  piece: PieceProps;
+  piece: BoardPiece;
 }
 
-interface BoardProps {
+type BoardProps = {
   position: BoardSquare[][];
 }
 
@@ -58,7 +60,7 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
     };
     const key = `square.${i}.${j}`;
     return createElement(Square, {
-      key, color, piece, style,
+      key, color, piece, style, file: j, rank: i,
     });
   });
 
@@ -67,9 +69,11 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
   );
 
   return (
-    <div className={classes.section}>
-      {mapPosition(position)}
-    </div>
+    <DndProvider backend={Backend}>
+      <div className={classes.section}>
+        {mapPosition(position)}
+      </div>
+    </DndProvider>
   );
 };
 
