@@ -4,9 +4,10 @@ import { makeStyles } from '@material-ui/styles';
 
 // import components
 import Container from '@material-ui/core/Container';
+import Board from '../Board';
 
 const useStyles = makeStyles(() => ({
-  section: {
+  root: {
     fontSize: 16,
   },
 }));
@@ -29,11 +30,9 @@ const Main: FunctionComponent<MainContainerProps> = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.section}>
-      <Container>
-        Main
-      </Container>
-    </div>
+    <Container component="section" classes={classes}>
+      <Board />
+    </Container>
   );
 };
 

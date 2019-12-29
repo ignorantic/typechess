@@ -4,8 +4,13 @@ import createSagaMiddleware from 'redux-saga';
 import rootReducer from './reducers';
 import rootSaga from './rootSaga';
 
+interface Game {
+  board: object;
+}
+
 export interface ApplicationState {
   auth: object;
+  game: Game;
 }
 
 function makeStore(initialState: ApplicationState): Store {
