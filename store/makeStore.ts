@@ -1,10 +1,14 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer from './reducers';
 import rootSaga from './rootSaga';
 
-const makeStore = (initialState) => {
+export interface ApplicationState {
+  auth: object;
+}
+
+function makeStore(initialState: ApplicationState): Store {
   const sagaMiddleware = createSagaMiddleware();
 
   const store = createStore(
@@ -15,6 +19,6 @@ const makeStore = (initialState) => {
 
   sagaMiddleware.run(rootSaga);
   return store;
-};
+}
 
 export default makeStore;

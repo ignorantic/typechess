@@ -1,14 +1,4 @@
 export {
-  createRequiredValidator,
-  createIntegerValidator,
-  createNumberValidator,
-  createEmailValidator,
-  createConfirmationValidator,
-  createMinWidthValidator,
-  createPhoneValidator,
-} from './helpers/validatorCreator';
-
-export {
   authorize,
   login,
   logout,

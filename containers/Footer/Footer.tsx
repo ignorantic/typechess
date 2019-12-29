@@ -1,5 +1,5 @@
 // import libs
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
 // import components
@@ -11,6 +11,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+interface FooterProps {
+  someProp?: string | undefined;
+}
+
 const displayName = 'FooterComponent';
 
 const propTypes = {
@@ -21,15 +25,15 @@ const defaultProps = {
   //
 };
 
-const Footer = props => {
+const Footer: FunctionComponent<FooterProps> = () => {
   const classes = useStyles();
 
   return (
-    <nav className={classes.footer}>
+    <div className={classes.footer}>
       <Container>
         Footer
       </Container>
-    </nav>
+    </div>
   );
 };
 

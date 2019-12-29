@@ -1,6 +1,6 @@
 // import libs
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
+import PropTypes, { ReactElementLike, ReactNodeArray } from 'prop-types';
 
 // import components
 import PublicLayout from './Public';
@@ -8,17 +8,17 @@ import PublicLayout from './Public';
 // import resources
 import useGlobalStyles from '../assets/jss/global';
 
+interface LayoutProps {
+  children: string | number | boolean | {} | ReactElementLike | ReactNodeArray;
+}
+
 const displayName = 'LayoutComponents';
 
 const propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const defaultProps = {
-  //
-};
-
-const Layout = (props) => {
+const Layout: FunctionComponent<LayoutProps> = (props: LayoutProps) => {
   const { children } = props;
   useGlobalStyles();
   return (
@@ -30,6 +30,5 @@ const Layout = (props) => {
 
 Layout.displayName = displayName;
 Layout.propTypes = propTypes;
-Layout.defaultProps = defaultProps;
 
 export default Layout;

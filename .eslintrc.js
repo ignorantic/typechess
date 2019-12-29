@@ -25,16 +25,26 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
-  // add your custom rules here
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+      }
+    }
+  },
   rules: {
-    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
     'react/prop-types': 0,
     'react/jsx-props-no-spreading': 0,
-    // allow console during development
+    'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
+    'import/extensions': [2, 'ignorePackages', {
+      js: 'never',
+      jsx: 'never',
+      ts: 'never',
+      tsx: 'never',
+    }],
     'no-console': process.env.NODE_ENV === 'production' ? 2 : 1,
-    // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 1,
     '@typescript-eslint/unbound-method': 0,
-    // '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/explicit-function-return-type': 2,
   }
 };
