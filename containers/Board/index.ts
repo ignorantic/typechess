@@ -5,8 +5,7 @@ import { selectPosition } from '../../store/reducers/game/selectors';
 
 const BoardContainer: FunctionComponent = () => {
   const position = useSelector(selectPosition);
-  const props = { position };
-  return createElement(Board, props);
+  return createElement(Board, { position });
 };
 
 export default BoardContainer;
