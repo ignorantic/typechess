@@ -7,7 +7,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import makeStore from '../store/makeStore';
 import Layout from '../layout';
-import index from '../common/theme';
+import theme from '../common/theme';
 
 interface AppProps {
   Component: ComponentType;
@@ -35,7 +35,7 @@ class App extends NextApp<AppProps> {
     const { Component, pageProps, store } = this.props;
 
     return (
-      <MuiThemeProvider theme={index}>
+      <MuiThemeProvider theme={theme}>
         <CssBaseline />
         <Provider store={store}>
           <Layout>

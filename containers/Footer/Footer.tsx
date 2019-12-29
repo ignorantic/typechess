@@ -3,11 +3,11 @@ import React, { FunctionComponent } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
 // import components
-import Container from '@material-ui/core/Container';
+import { Container, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
-  footer: {
-    fontSize: 16,
+  root: {
+    textAlign: 'center',
   },
 }));
 
@@ -17,28 +17,20 @@ interface FooterProps {
 
 const displayName = 'FooterComponent';
 
-const propTypes = {
-  //
-};
-
-const defaultProps = {
-  //
-};
-
 const Footer: FunctionComponent<FooterProps> = () => {
   const classes = useStyles();
+  const year = (new Date()).getFullYear();
 
   return (
-    <div className={classes.footer}>
-      <Container>
-        Footer
-      </Container>
-    </div>
+    <Container component="footer" classes={classes}>
+      <Typography variant="body1">
+        {'Typechess © '}
+        {year}
+      </Typography>
+    </Container>
   );
 };
 
 Footer.displayName = displayName;
-Footer.propTypes = propTypes;
-Footer.defaultProps = defaultProps;
 
 export default Footer;

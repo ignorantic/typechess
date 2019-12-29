@@ -1,5 +1,4 @@
 {
-
   "parser": "@typescript-eslint/parser",
   "compilerOptions": {
     "module": "esnext",

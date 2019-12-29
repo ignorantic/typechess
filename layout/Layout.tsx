@@ -5,9 +5,6 @@ import PropTypes, { ReactElementLike, ReactNodeArray } from 'prop-types';
 // import components
 import PublicLayout from './Public';
 
-// import resources
-import useGlobalStyles from '../assets/jss/global';
-
 interface LayoutProps {
   children: string | number | boolean | {} | ReactElementLike | ReactNodeArray;
 }
@@ -20,7 +17,6 @@ const propTypes = {
 
 const Layout: FunctionComponent<LayoutProps> = (props: LayoutProps) => {
   const { children } = props;
-  useGlobalStyles();
   return (
     <PublicLayout>
       {children}

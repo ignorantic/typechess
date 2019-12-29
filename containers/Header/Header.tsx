@@ -1,6 +1,13 @@
 // import libs
 import React, { FunctionComponent } from 'react';
-import { Container } from '@material-ui/core';
+import { Container, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    textAlign: 'center',
+  },
+}));
 
 interface HeaderProps {
   someProp?: string | undefined;
@@ -16,13 +23,14 @@ const defaultProps = {
   //
 };
 
-const Header: FunctionComponent<HeaderProps> = () => (
-  <header>
-    <Container>
-      Header
+const Header: FunctionComponent<HeaderProps> = () => {
+  const classes = useStyles();
+  return (
+    <Container component="header" classes={classes} fixed>
+      <Typography variant="body1">Header</Typography>
     </Container>
-  </header>
-);
+  );
+};
 
 Header.displayName = displayName;
 Header.propTypes = propTypes;
