@@ -6,6 +6,7 @@ import Backend from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/styles';
 import { addIndex, map } from 'ramda';
 import Square from '../../common/components/Square';
+import { SquareProps } from '../../common/components/Square/Square';
 
 const useStyles = makeStyles(() => ({
   section: {
@@ -28,10 +29,17 @@ export type BoardPiece = {
 export type BoardSquare = {
   color: number;
   piece: BoardPiece;
+  selected?: boolean;
+  marked?: boolean;
 }
 
-type BoardProps = {
+export interface BoardProps {
   position: BoardSquare[][];
+  onMove: (file: number, rank: number) => void;
+  onSelect: (file: number, rank: number, mouse: boolean) => void;
+  onRelease: (file: number, rank: number) => void;
+  onFocus: (file: number, rank: number) => void;
+  onSwitchTurn: () => void;
 }
 
 const mapIndexed: Function = addIndex(map);
@@ -46,22 +54,35 @@ const propTypes = {
       type: PropTypes.number,
     }).isRequired,
   }).isRequired).isRequired).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onMove: PropTypes.func.isRequired,
+  // onRelease: PropTypes.func.isRequired,
+  // onFocus: PropTypes.func.isRequired,
+  // onSwitchTurn: PropTypes.func.isRequired,
 };
 
 const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
   const classes = useStyles();
-  const { position } = props;
+  const { position, onSelect, onMove } = props;
 
-  const mapFile = mapIndexed((square: BoardSquare, i: number, j: number): JSX.Element => {
+  const mapFile = mapIndexed((square: BoardSquare, rank: number, file: number): JSX.Element => {
     const { piece, color } = square;
     const style = {
-      top: `${100 - (12.5 * (i + 1))}%`,
-      left: `${12.5 * j}%`,
+      top: `${100 - (12.5 * (rank + 1))}%`,
+      left: `${12.5 * file}%`,
     };
-    const key = `square.${i}.${j}`;
-    return createElement(Square, {
-      key, color, piece, style, file: j, rank: i,
-    });
+    const key = `square.${rank}.${file}`;
+    const squareProps: SquareProps = {
+      key,
+      color,
+      piece,
+      style,
+      selected: Boolean(position[file][rank].selected),
+      marked: Boolean(position[file][rank].marked),
+      select: () => onSelect(file, rank, true),
+      move: () => onMove(file, rank),
+    };
+    return createElement(Square, squareProps);
   });
 
   const mapPosition = mapIndexed(

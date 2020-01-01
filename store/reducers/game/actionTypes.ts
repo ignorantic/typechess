@@ -1,6 +1,6 @@
 import keyMirror from 'keymirror';
 
-const ACTIONS = keyMirror({
+const ActionTypes = keyMirror({
   CHANGE_FOCUS: null,
   FLIP_BOARD: null,
   RELEASE: null,
@@ -16,4 +16,4 @@ const ACTIONS = keyMirror({
   STOP_BOTH: null,
 });
 
-export default ACTIONS;
+export default ActionTypes;

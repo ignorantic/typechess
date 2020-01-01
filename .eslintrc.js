@@ -45,6 +45,6 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 2 : 1,
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 1,
     '@typescript-eslint/unbound-method': 0,
-    '@typescript-eslint/explicit-function-return-type': 2,
+    '@typescript-eslint/explicit-function-return-type': 0,
   }
 };

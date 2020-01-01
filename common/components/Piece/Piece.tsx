@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import PropTypes from 'prop-types';
-import { useDrag, useDrop } from 'react-dnd';
+import { useDrag } from 'react-dnd';
 import { makeStyles } from '@material-ui/styles';
 import PieceView from './PieceView';
 
@@ -14,8 +14,6 @@ const useStyles = makeStyles(() => ({
 export type PieceProps = {
   color?: number | null;
   type?: number | null;
-  file: number;
-  rank: number;
 }
 
 const displayName = 'PieceComponent';
@@ -23,8 +21,6 @@ const displayName = 'PieceComponent';
 const propTypes = {
   type: PropTypes.oneOf([0, 1, 2, 3, 4, 5]),
   color: PropTypes.oneOf([1, 2]),
-  file: PropTypes.number.isRequired,
-  rank: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -36,8 +32,6 @@ const Piece: FunctionComponent<PieceProps> = (props: PieceProps) => {
   const {
     color,
     type,
-    file,
-    rank,
   } = props;
 
   const classes = useStyles();
@@ -49,17 +43,8 @@ const Piece: FunctionComponent<PieceProps> = (props: PieceProps) => {
     }),
   });
 
-  const [, drop] = useDrop({
-    accept: 'PIECE',
-    drop: () => console.log('Drop file:', file, ', rank:', rank),
-  });
-
-  if (isDragging) {
+  if (type === null || color === null || isDragging) {
     return <div className={classes.root} />;
-  }
-
-  if (type === null || color === null) {
-    return <div ref={drop} className={classes.root} />;
   }
 
   return (
