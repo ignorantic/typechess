@@ -1,12 +1,16 @@
 // import libs
-import React, { createElement, FunctionComponent } from 'react';
+import React, { createElement, FC } from 'react';
 import PropTypes from 'prop-types';
-import { DndProvider } from 'react-dnd';
-import Backend from 'react-dnd-html5-backend';
-import { makeStyles } from '@material-ui/styles';
 import { addIndex, map } from 'ramda';
-import DropTarget, { DropTargetProps } from './components/DropTarget';
-import DragLayer from './components/DragLayer';
+import { makeStyles } from '@material-ui/styles';
+
+// import interfaces
+import { SquareProps } from '../../common/components/Square/Square';
+
+// import components
+import Square from '../../common/components/Square';
+import { Piece } from '../../common/interfaces/Piece';
+import { FuncProp } from '../../common/components/types';
 
 const useStyles = makeStyles(() => ({
   section: {
@@ -14,23 +18,13 @@ const useStyles = makeStyles(() => ({
     height: 750,
     width: 750,
   },
-  square: {
-    position: 'absolute',
-    width: '12.5%',
-    height: '12.5%',
-  },
 }));
 
-export type BoardPiece = {
-  color?: number | null;
-  type?: number | null;
-}
-
-export type BoardSquare = {
-  color: number;
-  piece: BoardPiece;
-  selected?: boolean;
-  marked?: boolean;
+export interface BoardSquare {
+  readonly color: number;
+  readonly piece: Piece;
+  readonly selected?: boolean;
+  readonly marked?: boolean;
 }
 
 export interface BoardProps {
@@ -39,7 +33,7 @@ export interface BoardProps {
   onSelect: (file: number, rank: number, mouse: boolean) => void;
   onRelease: (file: number, rank: number) => void;
   onFocus: (file: number, rank: number) => void;
-  onSwitchTurn: () => void;
+  onSwitchTurn: FuncProp;
 }
 
 const mapIndexed: Function = addIndex(map);
@@ -56,13 +50,9 @@ const propTypes = {
   }).isRequired).isRequired).isRequired,
   onSelect: PropTypes.func.isRequired,
   onMove: PropTypes.func.isRequired,
-  // onRelease: PropTypes.func.isRequired,
-  // onFocus: PropTypes.func.isRequired,
-  // onSwitchTurn: PropTypes.func.isRequired,
 };
 
-const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
-  const classes = useStyles();
+const Board: FC<BoardProps> = (props: BoardProps) => {
   const { position, onSelect, onMove } = props;
 
   const mapFile = mapIndexed((square: BoardSquare, rank: number, file: number): JSX.Element => {
@@ -72,7 +62,7 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
       left: `${12.5 * file}%`,
     };
     const key = `square.${rank}.${file}`;
-    const squareProps: DropTargetProps = {
+    const squareProps: SquareProps = {
       key,
       color,
       piece,
@@ -82,20 +72,19 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
       select: () => onSelect(file, rank, true),
       move: () => onMove(file, rank),
     };
-    return createElement(DropTarget, squareProps);
+    return createElement(Square, squareProps);
   });
 
   const mapPosition = mapIndexed(
     (file: BoardSquare[], i: number): JSX.Element[] => mapFile(file, i),
   );
 
+  const classes = useStyles();
+
   return (
-    <DndProvider backend={Backend}>
-      <div className={classes.section}>
-        {mapPosition(position)}
-        <DragLayer />
-      </div>
-    </DndProvider>
+    <div className={classes.section}>
+      {mapPosition(position)}
+    </div>
   );
 };
 

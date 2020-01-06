@@ -1,5 +1,5 @@
 // import libs
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import PropTypes, { ReactElementLike, ReactNodeArray } from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => (
 ));
 
 interface PublicLayoutProps {
-  children: string | number | boolean | {} | ReactElementLike | ReactNodeArray;
+  readonly children: string | number | boolean | {} | ReactElementLike | ReactNodeArray;
 }
 
 const displayName = 'PublicLayoutComponent';
@@ -34,7 +34,7 @@ const propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const PublicLayout: FunctionComponent<PublicLayoutProps> = (props: PublicLayoutProps) => {
+const PublicLayout: FC<PublicLayoutProps> = (props: PublicLayoutProps) => {
   const {
     children,
   } = props;

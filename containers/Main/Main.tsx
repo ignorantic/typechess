@@ -1,5 +1,5 @@
 // import libs
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
 // import components
@@ -26,7 +26,7 @@ const defaultProps = {
   //
 };
 
-const Main: FunctionComponent<MainContainerProps> = () => {
+const Main: FC<MainContainerProps> = () => {
   const classes = useStyles();
 
   return (

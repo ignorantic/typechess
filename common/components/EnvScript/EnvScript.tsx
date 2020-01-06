@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import env from '../../../config/env';
 
-const EnvScript: FunctionComponent = () => (
+const EnvScript: FC = () => (
   <script
     // eslint-disable-next-line react/no-danger
     dangerouslySetInnerHTML={{

@@ -6,12 +6,12 @@ import rootReducer from './reducers';
 import rootSaga from './rootSaga';
 
 interface Game {
-  board: object;
+  readonly board: object;
 }
 
 export interface ApplicationState {
-  auth: object;
-  game: Game;
+  readonly auth: object;
+  readonly game: Game;
 }
 
 function makeStore(initialState: ApplicationState): Store {

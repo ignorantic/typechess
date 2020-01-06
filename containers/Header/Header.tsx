@@ -1,5 +1,5 @@
 // import libs
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { Container, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
@@ -23,7 +23,7 @@ const defaultProps = {
   //
 };
 
-const Header: FunctionComponent<HeaderProps> = () => {
+const Header: FC<HeaderProps> = () => {
   const classes = useStyles();
   return (
     <Container component="header" classes={classes} fixed>

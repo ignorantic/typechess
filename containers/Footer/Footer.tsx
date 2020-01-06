@@ -1,5 +1,5 @@
 // import libs
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
 // import components
@@ -12,12 +12,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface FooterProps {
-  someProp?: string | undefined;
+  readonly someProp?: string | undefined;
 }
 
 const displayName = 'FooterComponent';
 
-const Footer: FunctionComponent<FooterProps> = () => {
+const Footer: FC<FooterProps> = () => {
   const classes = useStyles();
   const year = (new Date()).getFullYear();
 

@@ -1,9 +1,11 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/styles';
-import Piece from '../../../common/components/Piece';
+import PieceView from '../PieceView/PieceView';
+import { Piece } from '../../interfaces/Piece';
+import { Children } from '../types';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -12,38 +14,31 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+
 export type DragSourceProps = {
-  color?: number | null;
-  type?: number | null;
+  children: Children;
+  piece: Piece;
 }
 
 const displayName = 'DragSourceComponent';
 
 const propTypes = {
-  type: PropTypes.oneOf([0, 1, 2, 3, 4, 5]),
-  color: PropTypes.oneOf([1, 2]),
+  children: PropTypes.node.isRequired,
+  piece: PropTypes.shape({
+    type: PropTypes.oneOf([0, 1, 2, 3, 4, 5]),
+    color: PropTypes.oneOf([1, 2]),
+  }).isRequired,
 };
 
-const defaultProps = {
-  type: null,
-  color: null,
-};
-
-const DragSource: FunctionComponent<DragSourceProps> = (props: DragSourceProps) => {
-  const {
-    color,
-    type,
-  } = props;
+const DragSource: FC<DragSourceProps> = (props: DragSourceProps) => {
+  const { children, piece } = props;
 
   const classes = useStyles();
 
   const [{ isDragging }, drag, preview] = useDrag({
     item: {
       type: 'PIECE',
-      piece: {
-        type,
-        color,
-      },
+      piece,
     },
     collect: (monitor) => ({
       isDragging: Boolean(monitor.isDragging()),
@@ -54,19 +49,15 @@ const DragSource: FunctionComponent<DragSourceProps> = (props: DragSourceProps) 
     preview(getEmptyImage(), { captureDraggingState: true });
   }, []);
 
-  if (type === null || color === null || isDragging) {
-    return <div className={classes.root} />;
-  }
-
   return (
     <div ref={drag} className={classes.root}>
-      <Piece color={color} type={type} />
+      {children}
+      {!isDragging && <PieceView piece={piece} />}
     </div>
   );
 };
 
 DragSource.displayName = displayName;
 DragSource.propTypes = propTypes;
-DragSource.defaultProps = defaultProps;
 
 export default DragSource;

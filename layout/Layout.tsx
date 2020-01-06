@@ -1,12 +1,13 @@
 // import libs
-import React, { FunctionComponent } from 'react';
-import PropTypes, { ReactElementLike, ReactNodeArray } from 'prop-types';
+import React, { FC } from 'react';
+import PropTypes from 'prop-types';
 
 // import components
 import PublicLayout from './Public';
+import { Children } from '../common/components/types';
 
 interface LayoutProps {
-  children: string | number | boolean | {} | ReactElementLike | ReactNodeArray;
+  readonly children: Children;
 }
 
 const displayName = 'LayoutComponents';
@@ -15,7 +16,7 @@ const propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const Layout: FunctionComponent<LayoutProps> = (props: LayoutProps) => {
+const Layout: FC<LayoutProps> = (props: LayoutProps) => {
   const { children } = props;
   return (
     <PublicLayout>

@@ -7,27 +7,27 @@ type FEN = string;
 type Move = string;
 
 export interface Square {
-  file: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  rank: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  readonly file: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  readonly rank: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 }
 
 interface Line {
-  FEN: FEN;
+  readonly FEN: FEN;
 }
 
 interface GameState {
-  board: Array<Array<object>>;
-  FEN: FEN;
-  prevFEN: FEN;
-  initialFEN: FEN;
-  turn: number;
-  check: boolean;
-  checkmate: boolean;
-  halfCount: number;
-  currentLine: number;
-  lines: Array<Array<Line>>;
-  lastMove: Move;
-  selected: Square | null;
+  readonly board: Array<Array<object>>;
+  readonly FEN: FEN;
+  readonly prevFEN: FEN;
+  readonly initialFEN: FEN;
+  readonly turn: number;
+  readonly check: boolean;
+  readonly checkmate: boolean;
+  readonly halfCount: number;
+  readonly currentLine: number;
+  readonly lines: Array<Array<Line>>;
+  readonly lastMove: Move;
+  readonly selected: Square | null;
 }
 
 // noinspection SpellCheckingInspection

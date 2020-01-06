@@ -1,12 +1,13 @@
-import React, { CSSProperties, FunctionComponent, useCallback } from 'react';
+import React, { CSSProperties, FC } from 'react';
 import PropTypes from 'prop-types';
-import { useDrop } from 'react-dnd';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core';
-import DragSource from './DragSource';
-import { BoardPiece } from '../Board';
+import DragSource from '../DragSource';
+import DropTarget from '../DropTarget';
+import { Piece } from '../../interfaces/Piece';
+import { FuncProp } from '../types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   square: {
@@ -34,15 +35,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface DropTargetProps {
-  key?: string;
-  style: CSSProperties;
-  color: number;
-  piece: BoardPiece;
-  selected?: boolean;
-  marked?: boolean;
-  move: () => void;
-  select: () => void;
+
+export interface SquareProps {
+  readonly key?: string;
+  readonly style: CSSProperties;
+  readonly color: number;
+  readonly piece: Piece;
+  readonly selected: boolean;
+  readonly marked: boolean;
+  readonly move: FuncProp;
+  readonly select: FuncProp;
 }
 
 const displayName = 'SquareComponent';
@@ -57,18 +59,13 @@ const propTypes = {
     type: PropTypes.oneOf([0, 1, 2, 3, 4, 5]),
     color: PropTypes.oneOf([1, 2]),
   }).isRequired,
-  selected: PropTypes.bool,
-  marked: PropTypes.bool,
+  selected: PropTypes.bool.isRequired,
+  marked: PropTypes.bool.isRequired,
   select: PropTypes.func.isRequired,
   move: PropTypes.func.isRequired,
 };
 
-const defaultProps = {
-  selected: false,
-  marked: false,
-};
-
-const DropTarget: FunctionComponent<DropTargetProps> = (props: DropTargetProps) => {
+const Square: FC<SquareProps> = (props: SquareProps) => {
   const {
     style,
     color,
@@ -89,42 +86,20 @@ const DropTarget: FunctionComponent<DropTargetProps> = (props: DropTargetProps) 
     [classes.markedBlack]: color === 2 && marked,
   });
 
-  const [, drop] = useDrop({
-    accept: 'PIECE',
-    drop: () => {
-      if (marked) {
-        move();
-      }
-    },
-  });
-
-  const handleClick = useCallback(() => {
-    if (marked) {
-      move();
-    } else {
-      select();
-    }
-  }, [marked]);
-
   return (
     <div
       role="toolbar"
-      ref={drop}
       className={className}
       style={style}
-      onKeyPress={handleClick}
-      onMouseDown={handleClick}
     >
-      <DragSource
-        color={piece.color}
-        type={piece.type}
-      />
+      <DragSource piece={piece}>
+        <DropTarget select={select} move={move} marked={marked} />
+      </DragSource>
     </div>
   );
 };
 
-DropTarget.displayName = displayName;
-DropTarget.propTypes = propTypes;
-DropTarget.defaultProps = defaultProps;
+Square.displayName = displayName;
+Square.propTypes = propTypes;
 
-export default DropTarget;
+export default Square;
