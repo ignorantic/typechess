@@ -5,8 +5,8 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core';
-import Piece from '../Piece';
-import { BoardPiece } from '../../../containers/Board/Board';
+import DragSource from './DragSource';
+import { BoardPiece } from '../Board';
 
 const useStyles = makeStyles((theme: Theme) => ({
   square: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface SquareProps {
+export interface DropTargetProps {
   key?: string;
   style: CSSProperties;
   color: number;
@@ -68,7 +68,7 @@ const defaultProps = {
   marked: false,
 };
 
-const Square: FunctionComponent<SquareProps> = (props: SquareProps) => {
+const DropTarget: FunctionComponent<DropTargetProps> = (props: DropTargetProps) => {
   const {
     style,
     color,
@@ -115,7 +115,7 @@ const Square: FunctionComponent<SquareProps> = (props: SquareProps) => {
       onKeyPress={handleClick}
       onMouseDown={handleClick}
     >
-      <Piece
+      <DragSource
         color={piece.color}
         type={piece.type}
       />
@@ -123,8 +123,8 @@ const Square: FunctionComponent<SquareProps> = (props: SquareProps) => {
   );
 };
 
-Square.displayName = displayName;
-Square.propTypes = propTypes;
-Square.defaultProps = defaultProps;
+DropTarget.displayName = displayName;
+DropTarget.propTypes = propTypes;
+DropTarget.defaultProps = defaultProps;
 
-export default Square;
+export default DropTarget;

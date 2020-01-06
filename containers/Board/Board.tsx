@@ -5,8 +5,8 @@ import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/styles';
 import { addIndex, map } from 'ramda';
-import Square from '../../common/components/Square';
-import { SquareProps } from '../../common/components/Square/Square';
+import DropTarget, { DropTargetProps } from './components/DropTarget';
+import DragLayer from './components/DragLayer';
 
 const useStyles = makeStyles(() => ({
   section: {
@@ -72,7 +72,7 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
       left: `${12.5 * file}%`,
     };
     const key = `square.${rank}.${file}`;
-    const squareProps: SquareProps = {
+    const squareProps: DropTargetProps = {
       key,
       color,
       piece,
@@ -82,7 +82,7 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
       select: () => onSelect(file, rank, true),
       move: () => onMove(file, rank),
     };
-    return createElement(Square, squareProps);
+    return createElement(DropTarget, squareProps);
   });
 
   const mapPosition = mapIndexed(
@@ -93,6 +93,7 @@ const Board: FunctionComponent<BoardProps> = (props: BoardProps) => {
     <DndProvider backend={Backend}>
       <div className={classes.section}>
         {mapPosition(position)}
+        <DragLayer />
       </div>
     </DndProvider>
   );
