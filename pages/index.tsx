@@ -1,15 +1,12 @@
 import { NextPage, NextPageContext } from 'next';
-import { Typography } from '@material-ui/core';
+import Main from '../containers/Main';
 
 interface HomeProps {
   userAgent?: string;
 }
 
-const Home: NextPage<HomeProps> = ({ userAgent }) => (
-  <Typography variant="h4">
-    Hello world! - user agent:
-    {userAgent}
-  </Typography>
+const Home: NextPage<HomeProps> = () => (
+  <Main />
 );
 
 Home.getInitialProps = async (

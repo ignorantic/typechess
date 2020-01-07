@@ -2,7 +2,9 @@
 /** @namespace process.env.BASE_URL */
 /** @namespace process.env.PORT */
 import axios from 'axios';
-import { API_URL, API_VERSION } from '../../config/env';
+import env from '../../config/env';
+
+const { API_URL, API_VERSION } = env;
 
 const Http = axios.create({
   baseURL: `${API_URL}/${API_VERSION}`,
