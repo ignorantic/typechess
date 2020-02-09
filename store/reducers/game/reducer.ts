@@ -1,5 +1,5 @@
-import { AnyAction, Reducer } from 'redux';
-import ActionTypes from './actionTypes';
+import { AnyAction } from 'redux';
+import { createSlice } from '@reduxjs/toolkit';
 import { parseFEN } from '../../../lib/jboard/fen';
 
 type FEN = string;
@@ -49,27 +49,23 @@ const initialState: GameState = {
   ...parseFEN(initialFEN),
 };
 
-const game: Reducer = (state = initialState, action: AnyAction) => {
-  switch (action.type) {
-    case ActionTypes.SELECT: {
-      return {
-        ...state,
-        ...action.gamePayload,
-      };
-    }
-    case ActionTypes.MOVE:
-    case ActionTypes.UPDATE_POSITION:
-    case ActionTypes.GOTO:
-    case ActionTypes.CHANGE_FEN: {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
+export const { reducer, actions } = createSlice({
+  name: 'GAME',
+  initialState,
+  reducers: {
+    select: (state: GameState, action: AnyAction) => ({
+      ...state,
+      ...action.payload,
+    }),
+    move: (state: GameState, action: AnyAction) => ({
+      ...state,
+      ...action.payload,
+    }),
+    changeFocus: (state: GameState, action: AnyAction) => ({
+      ...state,
+      ...action.payload,
+    }),
+  },
+});
 
-export default game;
+export default reducer;

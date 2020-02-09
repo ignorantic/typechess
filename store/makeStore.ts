@@ -3,16 +3,12 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
-import reducer from './reducers';
+import reducer from './rootReducer';
 import rootSaga from './rootSaga';
-
-interface Game {
-  readonly board: object;
-}
 
 export interface ApplicationState {
   readonly auth: object;
-  readonly game: Game;
+  readonly game: object;
 }
 
 function makeStore(preloadedState: ApplicationState): Store {
