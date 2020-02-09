@@ -1,10 +1,8 @@
 import { AnyAction } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
-import { parseFEN } from '../../../../lib/jboard/fen';
+import { FEN, Board, parseFEN } from '../../../../lib/typeboard/fen';
 
-type FEN = string;
-
-type Move = string;
+export type Move = string;
 
 export interface Square {
   readonly file: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -16,7 +14,7 @@ interface Line {
 }
 
 interface GameState {
-  readonly board: Array<Array<object>>;
+  readonly board: Board | Array<Array<void>> | null;
   readonly FEN: FEN;
   readonly prevFEN: FEN;
   readonly initialFEN: FEN;

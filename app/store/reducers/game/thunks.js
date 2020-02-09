@@ -1,8 +1,8 @@
 import { actions } from './reducer';
-import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/jboard/notation';
-import { isCheckmate, isInCheck } from '../../../../lib/jboard/utils';
-import select from '../../../../lib/jboard/select';
-import move from '../../../../lib/jboard/move';
+import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/typeboard/notation';
+import { isCheckmate, isInCheck } from '../../../../lib/typeboard/utils';
+import select from '../../../../lib/typeboard/select';
+import move from '../../../../lib/typeboard/move';
 
 export function selectSquare(file, rank, mouse) {
   return (dispatch, getState) => {
