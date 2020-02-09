@@ -1,8 +1,9 @@
-import { createStore, applyMiddleware, Store } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { Store } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import thunk from 'redux-thunk';
-import rootReducer from './reducers';
+import logger from 'redux-logger';
+import reducer from './reducers';
 import rootSaga from './rootSaga';
 
 interface Game {
@@ -14,15 +15,16 @@ export interface ApplicationState {
   readonly game: Game;
 }
 
-function makeStore(initialState: ApplicationState): Store {
+function makeStore(preloadedState: ApplicationState): Store {
   const saga = createSagaMiddleware();
-  const middleWares = [saga, thunk];
-
-  const store = createStore(
-    rootReducer,
-    initialState,
-    composeWithDevTools(applyMiddleware(...middleWares)),
-  );
+  const middleware = [saga, thunk, logger];
+  const store = configureStore({
+    reducer,
+    middleware,
+    devTools: process.env.NODE_ENV !== 'production',
+    preloadedState,
+    enhancers: [],
+  });
 
   saga.run(rootSaga);
   return store;
