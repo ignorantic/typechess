@@ -5,9 +5,9 @@ import { Store } from 'redux';
 import withRedux from 'next-redux-wrapper';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import makeStore from '../store/makeStore';
-import Layout from '../layout';
-import theme from '../common/theme';
+import makeStore from '../app/store/makeStore';
+import Layout from '../app/layout';
+import theme from '../app/common/theme';
 
 interface AppProps {
   Component: ComponentType;

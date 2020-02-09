@@ -1,5 +1,5 @@
 import { NextPage, NextPageContext } from 'next';
-import Main from '../containers/Main';
+import Main from '../app/containers/Main';
 
 interface HomeProps {
   userAgent?: string;

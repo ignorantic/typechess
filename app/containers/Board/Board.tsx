@@ -10,7 +10,6 @@ import { SquareProps } from '../../common/components/Square/Square';
 // import components
 import Square from '../../common/components/Square';
 import { Piece } from '../../common/interfaces/Piece';
-import { FuncProp } from '../../common/components/types';
 
 const useStyles = makeStyles(() => ({
   section: {
@@ -31,9 +30,7 @@ export interface BoardProps {
   position: BoardSquare[][];
   onMove: (file: number, rank: number) => void;
   onSelect: (file: number, rank: number, mouse: boolean) => void;
-  onRelease: (file: number, rank: number) => void;
   onFocus: (file: number, rank: number) => void;
-  onSwitchTurn: FuncProp;
 }
 
 const mapIndexed: Function = addIndex(map);

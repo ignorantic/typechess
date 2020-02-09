@@ -4,8 +4,8 @@ import Document, {
 } from 'next/document';
 import { AppType, RenderPageResult } from 'next/dist/next-server/lib/utils';
 import { ServerStyleSheets as ServerMaterialStyleSheets } from '@material-ui/styles';
-import index from '../common/theme';
-import EnvScript from '../common/components/EnvScript';
+import theme from '../app/common/theme';
+import EnvScript from '../app/common/components/EnvScript';
 
 class EnhanceDocument extends Document {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
@@ -65,7 +65,7 @@ class EnhanceDocument extends Document {
             content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
           />
           {/* PWA primary color */}
-          <meta name="theme-color" content={index.palette.primary.main} />
+          <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
