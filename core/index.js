@@ -13,5 +13,4 @@ export {
   handleError,
 } from './workers/errorHandlers';
 
-export { default as createReducer } from './store';
 export { default as Http } from './http/Http';

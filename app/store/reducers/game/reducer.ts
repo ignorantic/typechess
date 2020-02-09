@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
-import { parseFEN } from '../../../lib/jboard/fen';
+import { parseFEN } from '../../../../lib/jboard/fen';
 
 type FEN = string;
 
