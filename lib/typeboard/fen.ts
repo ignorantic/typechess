@@ -17,7 +17,7 @@ function splitFEN(fen: FEN) {
   };
 }
 
-export function parseFENRank(fen: FEN): Array<Piece> {
+export function parseFENRank(fen: FEN): Piece[] {
   let n;
   let count = 0;
   const { length } = fen;

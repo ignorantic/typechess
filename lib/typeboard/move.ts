@@ -11,7 +11,6 @@ import {
   Board, Castling, Color, FEN, PieceType, Position, Square,
 } from './types';
 
-
 function getNewCastling(
   castling: Castling,
   color: Color,
@@ -201,7 +200,7 @@ export default function move(fen: FEN, UCIMove: string) {
     fullCount: newFullCount,
     lastMove,
   } = handleMove(position, start, stop, promType);
-  const newFEN = generateFEN(
+  const newFen = generateFEN(
     newBoard, newTurn, newCastling, newEnPassant,
     newCountFiftyMove, newFullCount,
   );
@@ -212,7 +211,7 @@ export default function move(fen: FEN, UCIMove: string) {
     enPassant: newEnPassant,
     countFiftyMove: newCountFiftyMove,
     fullCount: newFullCount,
-    fen: newFEN,
+    fen: newFen,
     lastMove,
   };
 }

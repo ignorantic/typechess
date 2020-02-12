@@ -21,17 +21,17 @@ export function selectSquare(file, rank, mouse) {
 }
 
 export function moveToSquare(file, rank) {
-  function writeMove(lines, currentLine, halfCount, lastMove, FEN) {
-    const prevFEN = lines[currentLine][halfCount].FEN;
+  function writeMove(lines, currentLine, halfCount, lastMove, fen) {
+    const prevFen = lines[currentLine][halfCount].fen;
     return lines.map((line, index) => {
       if (index === currentLine) {
         return [
           ...line,
           {
             move: lastMove,
-            SAN: UCIToSAN(prevFEN, lastMove),
-            FAN: UCIToFAN(prevFEN, lastMove),
-            FEN,
+            san: UCIToSAN(prevFen, lastMove),
+            fan: UCIToFAN(prevFen, lastMove),
+            fen,
           },
         ];
       }
@@ -50,13 +50,13 @@ export function moveToSquare(file, rank) {
     const start = squareToUCI(selected.file, selected.rank);
     const UCIMove = `${start}${stop}`;
     const newPosition = move(fen, UCIMove);
-    const { turn, lastMove, fen: newFEN } = newPosition;
-    const newLines = writeMove(lines, currentLine, halfCount, lastMove, newFEN);
-    const check = isInCheck(newFEN, turn);
-    const checkmate = isCheckmate(newFEN);
+    const { turn, lastMove, fen: newFen } = newPosition;
+    const newLines = writeMove(lines, currentLine, halfCount, lastMove, newFen);
+    const check = isInCheck(newFen, turn);
+    const checkmate = isCheckmate(newFen);
     const payload = {
       ...newPosition,
-      prevFEN: fen,
+      prevFen: fen,
       lines: newLines,
       halfCount: halfCount + 1,
       check,

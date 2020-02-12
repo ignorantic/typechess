@@ -17,8 +17,8 @@ interface Line {
 interface GameState {
   readonly board: Board | Array<Array<void>> | null;
   readonly fen: FEN;
-  readonly prevFEN: FEN;
-  readonly initialFEN: FEN;
+  readonly prevFen: FEN;
+  readonly initialFen: FEN;
   readonly turn: number;
   readonly check: boolean;
   readonly checkmate: boolean;
@@ -35,8 +35,8 @@ const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const initialState: GameState = {
   board: [[]],
   fen: initialFen,
-  prevFEN: initialFen,
-  initialFEN: initialFen,
+  prevFen: initialFen,
+  initialFen,
   turn: 1,
   check: false,
   checkmate: false,

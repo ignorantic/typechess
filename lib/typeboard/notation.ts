@@ -28,6 +28,7 @@ export function UCIToSquare(move: string): Square | null {
 
 export function UCIToAN(fen: FEN, move: string, pieces: string[]) {
   const { board, turn } = parseFEN(fen);
+  // TODO: avoid the hack
   const startSquare: Square = UCIToSquare(move.slice(0, 2)) || { file: 0, rank: 0 };
   const stopSquare: Square = UCIToSquare(move.slice(2, 4)) || { file: 0, rank: 0 };
 
@@ -102,22 +103,26 @@ export function toUCI(start: Square, stop: Square, promType: PieceType = null): 
   return `${startUCI}${stopUCI}${pieceTypeUCI}`;
 }
 
-export function toPieceType(piece: string): PieceType {
+export function toPieceType(piece: string | number): PieceType {
   const p: PieceType = 0;
   const r: PieceType = 1;
   const n: PieceType = 2;
   const b: PieceType = 3;
   const q: PieceType = 4;
   const k: PieceType = 5;
-  const pieceTypes = {
-    r, n, b, q, k,
-  };
+
+  if (typeof piece === 'number') {
+    return [r, n, b, q, k].find((type) => type) || p;
+  }
+
   const key: string = piece.toLowerCase();
   if (key !== 'r' && key !== 'n' && key !== 'b' && key !== 'q' && key !== 'k') {
     return p;
   }
 
-  return pieceTypes[key];
+  return {
+    r, n, b, q, k,
+  }[key];
 }
 
 export function mapPiece(piece: string): Piece {

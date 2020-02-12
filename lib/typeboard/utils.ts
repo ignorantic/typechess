@@ -2,7 +2,7 @@ import { parseFEN } from './fen';
 import move from './move';
 import { toUCI } from './notation';
 import {
-  Color, PieceType, Rank, File, Board, Square, Position,
+  Color, PieceType, Rank, File, Board, Square, Position, FEN,
 } from './types';
 
 export function isSquare(a: number | Square, b?: number) {
@@ -90,11 +90,15 @@ const moves = {
 
 export function getAttackedSquares(
   board: Board, piece: PieceType, color: Color, file: File, rank: Rank,
-): Array<Square> {
+): Square[] {
   const count = (piece === 5 || piece === 2) ? 1 : 7;
-  const result = [];
+  const result: Square[] = [];
 
-  moves[piece].forEach((item) => {
+  if (piece === null || piece === 0) {
+    return result;
+  }
+
+  moves[piece].forEach((item: Square) => {
     let i = 0;
     while (i < count) {
       i += 1;
@@ -122,15 +126,7 @@ export function getAttackedSquares(
   return result;
 }
 
-/**
- * Is this square under attack?
- * @param {Array} board
- * @param {number} color - Color of active side.
- * @param {number} file - File of square.
- * @param {number} rank - Rank of square.
- * @returns {boolean}
- */
-export function isSquareAttacked(board, color, file, rank) {
+export function isSquareAttacked(board: Board, color: Color, file: File, rank: Rank): boolean {
   function isSquareAttackedByPawn() {
     const targetRank = (color === 1) ? rank + 1 : rank - 1;
     const targetFile = [file - 1, file + 1];
@@ -141,22 +137,17 @@ export function isSquareAttacked(board, color, file, rank) {
   }
 
   function isSquareAttackedByPiece() {
-    return Object.keys(moves).some((type) => {
-      const squares = getAttackedSquares(board, +type, color, file, rank);
-      return squares.some((item) => board[item.file][item.rank].piece.type === +type);
+    const pieceTypes: PieceType[] = [1, 2, 3, 4, 5];
+    return pieceTypes.some((type) => {
+      const squares = getAttackedSquares(board, type, color, file, rank);
+      return squares.some((item) => board[item.file][item.rank].piece.type === type);
     });
   }
 
   return isSquareAttackedByPawn() || isSquareAttackedByPiece();
 }
 
-/**
- * Return square on which the king stand.
- * @param {Array} board
- * @param {number} kingColor - Color of king.
- * @returns {?Object}
- */
-export function getKing(board, kingColor) {
+export function getKing(board: Board, kingColor: Color) {
   for (let file = 0; file < 8; file += 1) {
     for (let rank = 0; rank < 8; rank += 1) {
       const { type, color } = board[file][rank].piece;
@@ -172,20 +163,11 @@ export function getKing(board, kingColor) {
   return null;
 }
 
-/**
- * Return array of castling move objects.
- * @param {Object} position
- * @param {number} file
- * @param {number} rank
- * @returns {Array}
- */
-function getCastlingMove(position, file, rank) {
+function getCastlingMove(position: Position, file: File, rank: Rank): Square[] {
   const { board, castling } = position;
-  if (!(file === 4 && (rank === 0 || rank === 7))) return null;
+  if (!(file === 4 && (rank === 0 || rank === 7))) return [];
   const color = (rank === 0) ? 1 : 2;
-  if (castling[color] === 0) return null;
-  // if (isInCheck(color)) return null;
-  const result = [];
+  const result: Square[] = [];
 
   if (
     castling[color] > 1
@@ -215,9 +197,9 @@ function getCastlingMove(position, file, rank) {
  * @param {number} color
  * @returns {Array}
  */
-function getPawnCaptures(position, file, targetRank, color) {
+function getPawnCaptures(position: Position, file: File, targetRank: Rank, color: Color): Square[] {
   const { board, enPassant } = position;
-  const mvs = [];
+  const mvs: Square[] = [];
   const targets = [
     { file: file - 1, rank: targetRank },
     { file: file + 1, rank: targetRank },
@@ -235,19 +217,16 @@ function getPawnCaptures(position, file, targetRank, color) {
   return mvs;
 }
 
-/**
- * Is there check on the board?
- * @param {string|Object} param
- * @param {number} color - Color of king.
- * @returns {boolean}
- */
-export function isInCheck(param, color) {
+export function isInCheck(param: FEN | Position, color: Color): boolean {
   let position;
   if (typeof param === 'string') {
     position = parseFEN(param);
   } else if (typeof param === 'object') {
     position = param;
+  } else {
+    return false;
   }
+
   const { board } = position;
   const king = getKing(board, color);
   if (king) {
@@ -258,28 +237,21 @@ export function isInCheck(param, color) {
   return false;
 }
 
-/**
- * Check utils there discovered check on board.
- * @param {string} FEN
- * @param {number} turn
- * @param {{file: number, rank: number}} start - Start square of move.
- * @param {{file: number, rank: number}} stop - Stop square of move.
- * @returns {boolean}
- */
-export function willBeInCheck(FEN, turn, start, stop) {
-  const { fen: newFEN } = move(FEN, toUCI(start, stop));
-  return isInCheck(newFEN, turn);
+export function willBeInCheck(fen: FEN, turn: 1 | 2, start: Square, stop: Square): boolean {
+  const uciPath = toUCI(start, stop);
+  if (uciPath === null) {
+    return false;
+  }
+
+  const result = move(fen, uciPath);
+  if (result === null) {
+    return false;
+  }
+  const { fen: newFen } = result;
+  return isInCheck(newFen, turn);
 }
 
-/**
- * Filter illegal mvs.
- * @param {Object} position
- * @param {Array} mvs
- * @param {number} file
- * @param {number} rank
- * @returns {Array}
- */
-function filterMoves(position, mvs, file, rank) {
+function filterMoves(position: Position, mvs: Square[], file: File, rank: Rank) {
   const { fen, turn } = position;
   if (!mvs) return null;
   return mvs.filter((item) => {
@@ -288,14 +260,7 @@ function filterMoves(position, mvs, file, rank) {
   });
 }
 
-/**
- * Return array of move objects for pawn.
- * @param {Object} position
- * @param {number} file
- * @param {number} rank
- * @returns {Array}
- */
-function getPawnMoves(position, file, rank) {
+function getPawnMoves(position: Position, file: File, rank: Rank): Square[] {
   const { board } = position;
   let mvs = [];
   const { color } = board[file][rank].piece;
@@ -319,37 +284,22 @@ function getPawnMoves(position, file, rank) {
 
   mvs = mvs.concat(getPawnCaptures(position, file, rank + direction, color));
 
-  return filterMoves(position, mvs, file, rank);
+  return filterMoves(position, mvs, file, rank) || [];
 }
 
-/**
- * Return array of move objects for any pieces.
- * @param {Object} position
- * @param {number} file
- * @param {number} rank
- * @returns {Array}
- */
-function getPieceMoves(position, file, rank) {
+function getPieceMoves(position: Position, file: File, rank: Rank): Square[] {
   const { board } = position;
   const { type, color } = board[file][rank].piece;
   const mvs = getAttackedSquares(board, type, color, file, rank);
-  return filterMoves(position, mvs, file, rank);
+  return filterMoves(position, mvs, file, rank) || [];
 }
 
-/**
- * Return array of move objects for king.
- * @param {Object} position
- * @param {number} file
- * @param {number} rank
- * @returns {Array}
- */
-function getKingMoves(position, file, rank) {
+function getKingMoves(position: Position, file: File, rank: Rank): Square[] {
   let mvs = getPieceMoves(position, file, rank);
   const castlingMove = getCastlingMove(position, file, rank);
 
   if (castlingMove) mvs = mvs.concat(castlingMove);
 
-  // return filterMoves(position, mvs, file, rank);
   return mvs;
 }
 
@@ -373,7 +323,7 @@ export function getMoves(position: Position, file: File, rank: Rank): Square[] {
 
 function getAllMoves(position: Position): Square[] {
   const { board, turn } = position;
-  let allMoves = [];
+  let allMoves: Square[] = [];
   for (let f = 0; f < 8; f += 1) {
     for (let r = 0; r < 8; r += 1) {
       if (board[f][r].piece.color === turn) {
@@ -386,27 +336,23 @@ function getAllMoves(position: Position): Square[] {
   return allMoves;
 }
 
-/**
- * Is there checkmate on the board?
- * @param {string} FEN
- * @returns {boolean}
- */
-export function isCheckmate(FEN) {
-  const position = parseFEN(FEN);
+export function isCheckmate(fen: FEN): boolean {
+  const position = parseFEN(fen);
   const { turn } = position;
-  if (!isInCheck(FEN, turn)) return false;
+  if (!isInCheck(fen, turn)) return false;
   const allMoves = getAllMoves(position);
   return !allMoves.length;
 }
 
-/**
- * Check utils there discovered check on board.
- * @param {string} FEN
- * @param {{file: number, rank: number}} start - Start square of move.
- * @param {{file: number, rank: number}} stop - Stop square of move.
- * @returns {boolean}
- */
-export function willBeCheckmate(FEN, start, stop) {
-  const { fen: newFEN } = move(FEN, toUCI(start, stop));
-  return isCheckmate(newFEN);
+export function willBeCheckmate(fen: FEN, start: Square, stop: Square): boolean {
+  const uciMove = toUCI(start, stop);
+  if (uciMove === null) {
+    return false;
+  }
+  const result = move(fen, uciMove);
+  if (result === null) {
+    return false;
+  }
+  const { fen: newFen } = result;
+  return isCheckmate(newFen);
 }
