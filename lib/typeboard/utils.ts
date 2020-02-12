@@ -1,36 +1,24 @@
 import { parseFEN } from './fen';
 import move from './move';
 import { toUCI } from './notation';
+import {
+  Color, PieceType, Rank, File, Board, Square, Position,
+} from './types';
 
-/**
- * Check file and rank of square.
- * @param {number|Object.<string, number>} a
- * @param {number} [b]
- * @returns {boolean}
- */
-export function isSquare(a, b) {
+export function isSquare(a: number | Square, b?: number) {
   if (a === undefined || a === null || b === null) return false;
   if (typeof a === 'number') {
     if (typeof b === 'number') {
       return a >= 0 && a <= 7 && b >= 0 && b <= 7;
     }
-  } else if (typeof a === 'object') {
+  } else {
     const { file, rank } = a;
-    if (typeof file === 'number' && typeof rank === 'number') {
-      return file >= 0 && file <= 7 && rank >= 0 && rank <= 7;
-    }
+    return file >= 0 && file <= 7 && rank >= 0 && rank <= 7;
   }
   return false;
 }
 
-/**
- * Check utils there pawn promotion on board.
- * @param type
- * @param color
- * @param stopRank
- * @returns {boolean}
- */
-export function isPawnPromotion(type, color, stopRank) {
+export function isPawnPromotion(type: PieceType, color: Color, stopRank: Rank) {
   return (
     type === 0
     && ((color === 1 && stopRank === 7)
@@ -38,66 +26,28 @@ export function isPawnPromotion(type, color, stopRank) {
   );
 }
 
-/**
- * Is it castling?
- * @param {number} type
- * @param {number} startFile
- * @param {number} stopFile
- * @return {boolean}
- */
-export function isCastling(type, startFile, stopFile) {
+export function isCastling(type: PieceType, startFile: File, stopFile: File) {
   return type === 5 && Math.abs(startFile - stopFile) === 2;
 }
 
-/**
- * Is this piece freind?
- * @param {Array} board
- * @param {number} color - Color of piece.
- * @param {number} file - File of square.
- * @param {number} rank - Rank of square.
- * @returns {boolean}
- */
-export function isFriend(board, color, file, rank) {
+export function isFriend(board: Board, color: Color, file: File, rank: Rank): boolean {
   if (!isSquare(file, rank)) return false;
   if (board[file][rank].piece.type === null) return false;
   return color === board[file][rank].piece.color;
 }
 
-/**
- * Is this piece foe?
- * @param {Array} board
- * @param {number} color - Color of piece.
- * @param {number} file - File of square.
- * @param {number} rank - Rank of square.
- * @returns {boolean}
- */
-export function isFoe(board, color, file, rank) {
+export function isFoe(board: Board, color: Color, file: File, rank: Rank) {
   if (!isSquare(file, rank)) return false;
   if (board[file][rank].piece.type === null) return false;
   return color !== board[file][rank].piece.color;
 }
 
-/**
- * Is this piece a foe pawn?
- * @param {Array} board
- * @param {number} color - Color of piece.
- * @param {number} file - File of square.
- * @param {number} rank - Rank of square.
- * @returns {boolean}
- */
-export function isFoesPawn(board, color, file, rank) {
+export function isFoesPawn(board: Board, color: Color, file: File, rank: Rank) {
   if (!isSquare(file, rank)) return false;
   return board[file][rank].piece.type === 0 && isFoe(board, color, file, rank);
 }
 
-/**
- * Is this square empty?
- * @param {Array} board
- * @param {number} file - File of square.
- * @param {number} rank - Rank of square.
- * @returns {boolean}
- */
-export function isEmpty(board, file, rank) {
+export function isEmpty(board: Board, file: File, rank: Rank): boolean {
   if (!isSquare(file, rank)) return false;
   return board[file][rank].piece.type === null;
 }
@@ -108,7 +58,7 @@ export function isEmpty(board, file, rank) {
  * @param {?{file: number, rank: number}} enPassant
  * @returns {boolean}
  */
-export function isEnPassant(square, enPassant) {
+export function isEnPassant(square: Square, enPassant: Square | null): boolean {
   if (!enPassant) return false;
   return enPassant.file === square.file && enPassant.rank === square.rank;
 }
@@ -138,16 +88,9 @@ const moves = {
   5: [...rook, ...bishop],
 };
 
-/**
- * Return array of square under attack by the piece.
- * @param {Array} board
- * @param {number} piece - Type of piece.
- * @param {number} color - Color of piece.
- * @param {number} file - File of square.
- * @param {number} rank - Rank of square.
- * @returns {?Array}
- */
-export function getAttackedSquares(board, piece, color, file, rank) {
+export function getAttackedSquares(
+  board: Board, piece: PieceType, color: Color, file: File, rank: Rank,
+): Array<Square> {
   const count = (piece === 5 || piece === 2) ? 1 : 7;
   const result = [];
 
@@ -192,7 +135,7 @@ export function isSquareAttacked(board, color, file, rank) {
     const targetRank = (color === 1) ? rank + 1 : rank - 1;
     const targetFile = [file - 1, file + 1];
 
-    return targetFile.some(item => (
+    return targetFile.some((item) => (
       isSquare(item, targetRank) && isFoesPawn(board, color, item, targetRank)
     ));
   }
@@ -200,7 +143,7 @@ export function isSquareAttacked(board, color, file, rank) {
   function isSquareAttackedByPiece() {
     return Object.keys(moves).some((type) => {
       const squares = getAttackedSquares(board, +type, color, file, rank);
-      return squares.some(item => board[item.file][item.rank].piece.type === +type);
+      return squares.some((item) => board[item.file][item.rank].piece.type === +type);
     });
   }
 
@@ -324,7 +267,7 @@ export function isInCheck(param, color) {
  * @returns {boolean}
  */
 export function willBeInCheck(FEN, turn, start, stop) {
-  const { FEN: newFEN } = move(FEN, toUCI(start, stop));
+  const { fen: newFEN } = move(FEN, toUCI(start, stop));
   return isInCheck(newFEN, turn);
 }
 
@@ -337,11 +280,11 @@ export function willBeInCheck(FEN, turn, start, stop) {
  * @returns {Array}
  */
 function filterMoves(position, mvs, file, rank) {
-  const { FEN, turn } = position;
+  const { fen, turn } = position;
   if (!mvs) return null;
   return mvs.filter((item) => {
     const start = { file, rank };
-    return !willBeInCheck(FEN, turn, start, item);
+    return !willBeInCheck(fen, turn, start, item);
   });
 }
 
@@ -410,14 +353,7 @@ function getKingMoves(position, file, rank) {
   return mvs;
 }
 
-/**
- * Return array of valid moves for piece on square.
- * @param {Object} position
- * @param {number} file - The file value.
- * @param {number} rank - The rank value.
- * @returns {Array}
- */
-export function getMoves(position, file, rank) {
+export function getMoves(position: Position, file: File, rank: Rank): Square[] {
   const { board } = position;
   switch (board[file][rank].piece.type) {
     case 0: {
@@ -435,12 +371,7 @@ export function getMoves(position, file, rank) {
   }
 }
 
-/**
- * Return array of valid moves for all pieces of the color.
- * @param {Object} position
- * @returns {Array}
- */
-function getAllMoves(position) {
+function getAllMoves(position: Position): Square[] {
   const { board, turn } = position;
   let allMoves = [];
   for (let f = 0; f < 8; f += 1) {
@@ -476,6 +407,6 @@ export function isCheckmate(FEN) {
  * @returns {boolean}
  */
 export function willBeCheckmate(FEN, start, stop) {
-  const { FEN: newFEN } = move(FEN, toUCI(start, stop));
+  const { fen: newFEN } = move(FEN, toUCI(start, stop));
   return isCheckmate(newFEN);
 }

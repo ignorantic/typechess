@@ -1,37 +1,23 @@
 import { parseFEN } from './fen';
 import { isSquare, getMoves } from './utils';
+import { FEN, Position } from './types';
 
-/**
- * Mark square for valid moves.
- * @param {Object} position
- * @param {number} file - The file value.
- * @param {number} rank - The rank value.
- * @return {Object}
- */
-function markMoves(position, file, rank) {
+function markMoves(position: Position, file: number, rank: number) {
   const { board } = position;
   if (board[file][rank].piece.type === null) return null;
   const moves = getMoves(position, file, rank);
   if (!moves) return null;
   const isMarked = moves.length > 0;
   const markedBoard = [...board];
-  moves.forEach((item) => {
-    markedBoard[item.file][item.rank].marked = true;
+  moves.forEach((square) => {
+    markedBoard[square.file][square.rank].marked = true;
   });
   return { markedBoard, isMarked };
 }
 
-/**
- * Select square.
- * @param {string} FEN
- * @param {number} file - The file value.
- * @param {number} rank - The rank value.
- * @return {Object}
- */
-export default function select(FEN, file, rank) {
-  if (typeof FEN !== 'string') return null;
+export default function select(fen: FEN, file: number, rank: number) {
   if (!isSquare(file, rank)) return null;
-  const position = parseFEN(FEN);
+  const position = parseFEN(fen);
   const { board, turn } = position;
   let newBoard;
   let isMarked;

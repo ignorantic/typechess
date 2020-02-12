@@ -1,34 +1,14 @@
 import { mapPiece, squareToUCI } from './notation';
 import { isSquare } from './utils';
-
-export type FEN = string;
-
-type Rank = string;
-
-type Ranks = Array<Rank>;
-
-type Piece = {
-  type: number|null;
-  color: number|null;
-}
-
-type Square = {
-  piece: Piece|null;
-  color: number|null;
-  selected: boolean;
-  marked: boolean;
-  id: string;
-}
-
-export type Board = Array<Array<Square>>
+import {
+  Board, Castling, FEN, Piece, Position, Ranks, Square,
+} from './types';
 
 function splitFEN(fen: FEN) {
   const ranks = fen.split('/');
-  if (ranks.length !== 8) return null;
   const tail = ranks[7].split(' ');
   [ranks[7]] = tail;
   tail.shift();
-  if (tail.length !== 5) return null;
   ranks.reverse();
 
   return {
@@ -37,40 +17,30 @@ function splitFEN(fen: FEN) {
   };
 }
 
-export function parseFENRank(fen: FEN): Array<Piece>|null {
+export function parseFENRank(fen: FEN): Array<Piece> {
   let n;
   let count = 0;
   const { length } = fen;
   const result = [];
 
-  if (length > 8) return null;
-
   for (let i = 0; i < length; i += 1) {
     if (+fen[i] > 0 && +fen[i] < 9) {
       // fill squares with empty
       n = +fen[i];
-      if (count + n < 9) {
-        for (let j = 0; j < n; j += 1) {
-          result[count] = { type: null, color: null };
-          count += 1;
-        }
-      } else return null;
+      for (let j = 0; j < n; j += 1) {
+        result[count] = { type: null, color: null };
+        count += 1;
+      }
     } else {
-      const piece = mapPiece(fen[i]);
-      if (piece) result[count] = piece;
-      else return null;
+      result[count] = mapPiece(fen[i]);
       count += 1;
     }
-
-    if (count > 8) return null;
   }
-
-  if (count !== 8) return null;
 
   return result;
 }
 
-export function parseFENBoard(ranks: Ranks): Board|null {
+export function parseFENBoard(ranks: Ranks): Board {
   let file;
   let rank;
   let rankSet;
@@ -80,7 +50,7 @@ export function parseFENBoard(ranks: Ranks): Board|null {
     for (let j = 0; j < 8; j += 1) {
       result[i][j] = {
         color: null,
-        piece: null,
+        piece: { color: null, type: null },
         selected: false,
         marked: false,
         id: `${i}.${j}`,
@@ -92,8 +62,6 @@ export function parseFENBoard(ranks: Ranks): Board|null {
   for (rank = 0; rank < 8; rank += 1) {
     countSquare += 1;
     rankSet = parseFENRank(ranks[rank]);
-    if (rankSet === null) return null;
-    if (rankSet.length !== 8) return null;
     for (file = 0; file < 8; file += 1) {
       countSquare += 1;
       result[file][rank] = {
@@ -114,7 +82,7 @@ export function parseFENTurn(fen: FEN) {
   return fen === 'w' ? 1 : 2;
 }
 
-export function parseFENCastling(fen: FEN) {
+export function parseFENCastling(fen: FEN): Castling {
   let cb = 0;
   let cw = 0;
   const { length } = fen;
@@ -179,14 +147,14 @@ export function parseFENEnPassant(fen: FEN, board: Board) {
   return null;
 }
 
-export function parseFEN(fen: FEN) {
+export function parseFEN(fen: FEN): Position {
   const hash = splitFEN(fen);
-  if (hash === null) return false;
   const { ranks, tail } = hash;
-  const board: Board|null = parseFENBoard(ranks);
+  const board = parseFENBoard(ranks);
+
   const turn = parseFENTurn(tail[0]);
   const castling = parseFENCastling(tail[1]);
-  const enPassant = board ? parseFENEnPassant(tail[2], board) : false;
+  const enPassant = board ? parseFENEnPassant(tail[2], board) : null;
   const countFiftyMove = +tail[3];
   const fullCount = +tail[4];
   const halfCount = ((fullCount * 2) + turn) - 3;
@@ -198,11 +166,12 @@ export function parseFEN(fen: FEN) {
     countFiftyMove,
     fullCount,
     halfCount,
-    FEN: fen,
+    fen,
+    lastMove: null,
   };
 }
 
-export function getFENCastling(castling: Array<number>) {
+export function getFENCastling(castling: Castling) {
   let result = '';
 
   if (castling[1] % 2 === 1) result += 'K';
@@ -214,7 +183,7 @@ export function getFENCastling(castling: Array<number>) {
   return '-';
 }
 
-export function getFENEnPassant(enPassant: { file: number; rank: number}) {
+export function getFENEnPassant(enPassant: Square | null) {
   if (!enPassant) {
     return '-';
   }
@@ -235,8 +204,8 @@ export function getFENPiece(file: number, rank: number, board: Board) {
   if (!isSquare(file, rank)) return null;
   const piece = board[file][rank].piece?.type;
   if (piece === null || piece === undefined) return null;
-  const FEN = pieces[piece];
-  return board[file][rank].piece?.color === 1 ? FEN.toUpperCase() : FEN;
+  const fen = pieces[piece];
+  return board[file][rank].piece?.color === 1 ? fen.toUpperCase() : fen;
 }
 
 export function getFENBoard(board: Board) {
@@ -276,8 +245,8 @@ export function getFENCounts(countFiftyMove: number, fullCount: number) {
 export function generateFEN(
   board: Board,
   turn: number,
-  castling: Array<number>,
-  enPassant: { file: number; rank: number},
+  castling: Castling,
+  enPassant: Square | null,
   countFiftyMove: number,
   fullCount: number,
 ): FEN {

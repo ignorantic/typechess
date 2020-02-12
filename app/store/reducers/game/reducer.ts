@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
-import { FEN, Board, parseFEN } from '../../../../lib/typeboard/fen';
+import { parseFEN } from '../../../../lib/typeboard/fen';
+import { Board, FEN } from '../../../../lib/typeboard/types';
 
 export type Move = string;
 
@@ -10,12 +11,12 @@ export interface Square {
 }
 
 interface Line {
-  readonly FEN: FEN;
+  readonly fen: FEN;
 }
 
 interface GameState {
   readonly board: Board | Array<Array<void>> | null;
-  readonly FEN: FEN;
+  readonly fen: FEN;
   readonly prevFEN: FEN;
   readonly initialFEN: FEN;
   readonly turn: number;
@@ -24,27 +25,27 @@ interface GameState {
   readonly halfCount: number;
   readonly currentLine: number;
   readonly lines: Array<Array<Line>>;
-  readonly lastMove: Move;
+  readonly lastMove: Move | null;
   readonly selected: Square | null;
 }
 
 // noinspection SpellCheckingInspection
-const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const initialState: GameState = {
   board: [[]],
-  FEN: initialFEN,
-  prevFEN: initialFEN,
-  initialFEN,
+  fen: initialFen,
+  prevFEN: initialFen,
+  initialFEN: initialFen,
   turn: 1,
   check: false,
   checkmate: false,
   halfCount: 0,
   currentLine: 0,
-  lines: [[{ FEN: initialFEN }]],
-  lastMove: '',
+  lines: [[{ fen: initialFen }]],
+  lastMove: null,
   selected: null,
-  ...parseFEN(initialFEN),
+  ...parseFEN(initialFen),
 };
 
 export const { reducer, actions } = createSlice({
