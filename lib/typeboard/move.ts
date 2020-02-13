@@ -183,7 +183,7 @@ export default function move(fen: FEN, UCIMove: string) {
   if (UCIMove.length < 4 || UCIMove.length > 5) return null;
   const start = UCIToSquare(UCIMove.slice(0, 2));
   const stop = UCIToSquare(UCIMove.slice(2, 4));
-  const promType = UCIMove[4] ? toPieceType(UCIMove[4]) : null;
+  const promType = UCIMove[4] ? toPieceType(UCIMove[4]) : 4;
 
   if (start === null || stop === null) return null;
   const position = parseFEN(fen);
