@@ -1,10 +1,9 @@
 import { AnyAction } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
-import { parseFEN } from '../../../../lib/jboard/fen';
+import { parseFEN } from '../../../../lib/typeboard/fen';
+import { Board, FEN } from '../../../../lib/typeboard/types';
 
-type FEN = string;
-
-type Move = string;
+export type Move = string;
 
 export interface Square {
   readonly file: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -12,41 +11,41 @@ export interface Square {
 }
 
 interface Line {
-  readonly FEN: FEN;
+  readonly fen: FEN;
 }
 
 interface GameState {
-  readonly board: Array<Array<object>>;
-  readonly FEN: FEN;
-  readonly prevFEN: FEN;
-  readonly initialFEN: FEN;
+  readonly board: Board | Array<Array<void>> | null;
+  readonly fen: FEN;
+  readonly prevFen: FEN;
+  readonly initialFen: FEN;
   readonly turn: number;
   readonly check: boolean;
   readonly checkmate: boolean;
   readonly halfCount: number;
   readonly currentLine: number;
   readonly lines: Array<Array<Line>>;
-  readonly lastMove: Move;
+  readonly lastMove: Move | null;
   readonly selected: Square | null;
 }
 
 // noinspection SpellCheckingInspection
-const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const initialState: GameState = {
   board: [[]],
-  FEN: initialFEN,
-  prevFEN: initialFEN,
-  initialFEN,
+  fen: initialFen,
+  prevFen: initialFen,
+  initialFen,
   turn: 1,
   check: false,
   checkmate: false,
   halfCount: 0,
   currentLine: 0,
-  lines: [[{ FEN: initialFEN }]],
-  lastMove: '',
+  lines: [[{ fen: initialFen }]],
+  lastMove: null,
   selected: null,
-  ...parseFEN(initialFEN),
+  ...parseFEN(initialFen),
 };
 
 export const { reducer, actions } = createSlice({

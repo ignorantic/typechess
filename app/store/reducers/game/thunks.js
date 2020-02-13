@@ -1,14 +1,14 @@
 import { actions } from './reducer';
-import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/jboard/notation';
-import { isCheckmate, isInCheck } from '../../../../lib/jboard/utils';
-import select from '../../../../lib/jboard/select';
-import move from '../../../../lib/jboard/move';
+import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/typeboard/notation';
+import { isCheckmate, isInCheck } from '../../../../lib/typeboard/utils';
+import select from '../../../../lib/typeboard/select';
+import move from '../../../../lib/typeboard/move';
 
 export function selectSquare(file, rank, mouse) {
   return (dispatch, getState) => {
     let uiPayload = null;
-    const { game: { FEN } } = getState();
-    const newPosition = select(FEN, file, rank);
+    const { game: { fen } } = getState();
+    const newPosition = select(fen, file, rank);
     const { isMarked } = newPosition;
     if (mouse && isMarked) uiPayload = [file, rank];
     const payload = newPosition;
@@ -21,17 +21,17 @@ export function selectSquare(file, rank, mouse) {
 }
 
 export function moveToSquare(file, rank) {
-  function writeMove(lines, currentLine, halfCount, lastMove, FEN) {
-    const prevFEN = lines[currentLine][halfCount].FEN;
+  function writeMove(lines, currentLine, halfCount, lastMove, fen) {
+    const prevFen = lines[currentLine][halfCount].fen;
     return lines.map((line, index) => {
       if (index === currentLine) {
         return [
           ...line,
           {
             move: lastMove,
-            SAN: UCIToSAN(prevFEN, lastMove),
-            FAN: UCIToFAN(prevFEN, lastMove),
-            FEN,
+            san: UCIToSAN(prevFen, lastMove),
+            fan: UCIToFAN(prevFen, lastMove),
+            fen,
           },
         ];
       }
@@ -44,19 +44,19 @@ export function moveToSquare(file, rank) {
     const stop = squareToUCI(file, rank);
     const {
       game: {
-        halfCount, FEN, lines, currentLine, selected,
+        halfCount, fen, lines, currentLine, selected,
       },
     } = getState();
     const start = squareToUCI(selected.file, selected.rank);
     const UCIMove = `${start}${stop}`;
-    const newPosition = move(FEN, UCIMove);
-    const { turn, lastMove, FEN: newFEN } = newPosition;
-    const newLines = writeMove(lines, currentLine, halfCount, lastMove, newFEN);
-    const check = isInCheck(newFEN, turn);
-    const checkmate = isCheckmate(newFEN);
+    const newPosition = move(fen, UCIMove);
+    const { turn, lastMove, fen: newFen } = newPosition;
+    const newLines = writeMove(lines, currentLine, halfCount, lastMove, newFen);
+    const check = isInCheck(newFen, turn);
+    const checkmate = isCheckmate(newFen);
     const payload = {
       ...newPosition,
-      prevFEN: FEN,
+      prevFen: fen,
       lines: newLines,
       halfCount: halfCount + 1,
       check,

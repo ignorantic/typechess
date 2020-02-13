@@ -33,6 +33,7 @@ module.exports = {
     }
   },
   rules: {
+    'import/no-cycle': 0,
     'react/prop-types': 0,
     'react/jsx-props-no-spreading': 0,
     'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
