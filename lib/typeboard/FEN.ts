@@ -23,6 +23,10 @@ class FEN {
   static parse(fen: string): Position {
     const hash = FEN.split(fen);
     const { ranks, tail } = hash;
+    if (ranks.length !== 8 || tail.length !== 5) {
+      return FEN.parse(FEN.INITIAL);
+    }
+
     const board = FEN.parseBoard(ranks);
 
     const turn = FEN.parseTurn(tail[0]);
@@ -60,8 +64,12 @@ class FEN {
     return `${bd} ${tn} ${cs} ${ep} ${cn}`;
   }
 
-  private static split(fen: string) {
+  private static split(fen: string): { ranks: string[]; tail: string[] } {
     const ranks = fen.split('/');
+    if (ranks.length !== 8) {
+      return { ranks: [], tail: [] };
+    }
+
     const tail = ranks[7].split(' ');
     [ranks[7]] = tail;
     tail.shift();
