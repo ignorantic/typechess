@@ -1,14 +1,23 @@
+import { times } from 'ramda';
 import {
-  Board, Castling, Piece, Position, Ranks, Square,
+  Board, Castling, Piece, PieceType, Position, Ranks, Square,
 } from './types';
-import { mapPiece, squareToUCI } from './notation';
+import { squareToUCI } from './notation';
 import { isSquare } from './utils';
 
 class FEN {
-  private static initial = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  private static SIZE = 8;
+
+  private static INITIAL = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+  private static EMPTY_PIECE: Piece = { type: null, color: null };
 
   static getInitial(): string {
-    return FEN.initial;
+    return FEN.INITIAL;
+  }
+
+  static getEmptyPiece(): Piece {
+    return FEN.EMPTY_PIECE;
   }
 
   static parse(fen: string): Position {
@@ -103,28 +112,43 @@ class FEN {
   }
 
   private static parseRank(fen: string): Piece[] {
-    let n;
-    let count = 0;
-    const { length } = fen;
-    const result = [];
+    const rank: string[] = fen.split('');
 
-    for (let i = 0; i < length; i += 1) {
-      if (+fen[i] > 0 && +fen[i] < 9) {
-        // fill squares with empty
-        n = +fen[i];
-        for (let j = 0; j < n; j += 1) {
-          result[count] = { type: null, color: null };
-          count += 1;
-        }
-      } else {
-        result[count] = mapPiece(fen[i]);
-        count += 1;
+    const pieces = rank.reduce((acc: Piece[], item: string) => {
+      const n = Number(item);
+      if (n > 0 && n <= FEN.SIZE) {
+        return acc.concat(times(FEN.getEmptyPiece, n));
       }
-    }
+      return acc.concat(FEN.mapPiece(item));
+    }, []);
 
+    return pieces.length === FEN.SIZE ? pieces : times(FEN.getEmptyPiece, FEN.SIZE);
+  }
+
+  private static mapPiece(piece: string): Piece {
+    const result: Piece = { type: null, color: null };
+    result.type = FEN.toPieceType(piece);
+    result.color = piece.toLowerCase() === piece ? 2 : 1;
     return result;
   }
 
+  private static toPieceType(piece: string): PieceType {
+    const p: PieceType = 0;
+    const r: PieceType = 1;
+    const n: PieceType = 2;
+    const b: PieceType = 3;
+    const q: PieceType = 4;
+    const k: PieceType = 5;
+
+    const key: string = piece.toLowerCase();
+    if (key !== 'p' && key !== 'r' && key !== 'n' && key !== 'b' && key !== 'q' && key !== 'k') {
+      return null;
+    }
+
+    return {
+      p, r, n, b, q, k,
+    }[key];
+  }
 
   private static parseTurn(fen: string) {
     return fen === 'w' ? 1 : 2;
@@ -133,9 +157,8 @@ class FEN {
   private static parseCastling(fen: string): Castling {
     let cb = 0;
     let cw = 0;
-    const { length } = fen;
 
-    if (fen === '-' || length > 4) return { 1: 0, 2: 0 };
+    if (fen === '-' || fen.length > 4) return { 1: 0, 2: 0 };
 
     if (fen.includes('K')) cw += 1;
     if (fen.includes('Q')) cw += 2;

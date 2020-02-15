@@ -3,7 +3,7 @@ import {
 } from './utils';
 import FEN from './FEN';
 import {
-  Piece, PieceType, Square,
+  PieceType, Square,
 } from './types';
 
 export function squareToUCI(file: number, rank: number) {
@@ -123,11 +123,4 @@ export function toPieceType(piece: string | number): PieceType {
   return {
     r, n, b, q, k,
   }[key];
-}
-
-export function mapPiece(piece: string): Piece {
-  const result: Piece = { type: null, color: null };
-  result.type = toPieceType(piece);
-  result.color = piece.toLowerCase() === piece ? 2 : 1;
-  return result;
 }
