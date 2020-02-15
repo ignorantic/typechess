@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
-import { parseFEN } from '../../../../lib/typeboard/fen';
-import { Board, FEN } from '../../../../lib/typeboard/types';
+import FEN from '../../../../lib/typeboard/FEN';
+import { Board } from '../../../../lib/typeboard/types';
 
 export type Move = string;
 
@@ -11,14 +11,14 @@ export interface Square {
 }
 
 interface Line {
-  readonly fen: FEN;
+  readonly fen: string;
 }
 
 interface GameState {
   readonly board: Board | Array<Array<void>> | null;
-  readonly fen: FEN;
-  readonly prevFen: FEN;
-  readonly initialFen: FEN;
+  readonly fen: string;
+  readonly prevFen: string;
+  readonly initialFen: string;
   readonly turn: number;
   readonly check: boolean;
   readonly checkmate: boolean;
@@ -29,8 +29,7 @@ interface GameState {
   readonly selected: Square | null;
 }
 
-// noinspection SpellCheckingInspection
-const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const initialFen = FEN.getInitial();
 
 const initialState: GameState = {
   board: [[]],
@@ -45,7 +44,7 @@ const initialState: GameState = {
   lines: [[{ fen: initialFen }]],
   lastMove: null,
   selected: null,
-  ...parseFEN(initialFen),
+  ...FEN.parse(initialFen),
 };
 
 export const { reducer, actions } = createSlice({

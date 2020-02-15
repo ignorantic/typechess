@@ -1,9 +1,9 @@
 import {
   isSquare, getAttackedSquares, isCastling, willBeInCheck, willBeCheckmate,
 } from './utils';
-import { parseFEN } from './fen';
+import FEN from './FEN';
 import {
-  FEN, Piece, PieceType, Square,
+  Piece, PieceType, Square,
 } from './types';
 
 export function squareToUCI(file: number, rank: number) {
@@ -26,8 +26,8 @@ export function UCIToSquare(move: string): Square | null {
   return result;
 }
 
-export function UCIToAN(fen: FEN, move: string, pieces: string[]) {
-  const { board, turn } = parseFEN(fen);
+export function UCIToAN(fen: string, move: string, pieces: string[]) {
+  const { board, turn } = FEN.parse(fen);
   // TODO: avoid the hack
   const startSquare: Square = UCIToSquare(move.slice(0, 2)) || { file: 0, rank: 0 };
   const stopSquare: Square = UCIToSquare(move.slice(2, 4)) || { file: 0, rank: 0 };
@@ -80,12 +80,12 @@ export function UCIToAN(fen: FEN, move: string, pieces: string[]) {
   return `${piece}${start}${middle}${stop}${post}`;
 }
 
-export function UCIToSAN(fen: FEN, move: string) {
+export function UCIToSAN(fen: string, move: string) {
   const pieces = ['', 'r', 'n', 'b', 'q', 'k'];
   return UCIToAN(fen, move, pieces);
 }
 
-export function UCIToFAN(fen: FEN, move: string): string {
+export function UCIToFAN(fen: string, move: string): string {
   const pieces = ['', '\u265C', '\u265E', '\u265D', '\u265B', '\u265A'];
   return UCIToAN(fen, move, pieces);
 }

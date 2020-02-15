@@ -1,5 +1,5 @@
 import { UCIToSquare, toUCI, toPieceType } from './notation';
-import { parseFEN, generateFEN } from './fen';
+import FEN from './FEN';
 import {
   isFoe,
   isFoesPawn,
@@ -8,7 +8,7 @@ import {
   isCastling,
 } from './utils';
 import {
-  Board, Castling, Color, FEN, PieceType, Position, Square,
+  Board, Castling, Color, PieceType, Position, Square,
 } from './types';
 
 function getNewCastling(
@@ -179,14 +179,14 @@ function handleMove(
   };
 }
 
-export default function move(fen: FEN, UCIMove: string) {
+export default function move(fen: string, UCIMove: string) {
   if (UCIMove.length < 4 || UCIMove.length > 5) return null;
   const start = UCIToSquare(UCIMove.slice(0, 2));
   const stop = UCIToSquare(UCIMove.slice(2, 4));
   const promType = UCIMove[4] ? toPieceType(UCIMove[4]) : 4;
 
   if (start === null || stop === null) return null;
-  const position = parseFEN(fen);
+  const position = FEN.parse(fen);
   if (position === null) {
     return null;
   }
@@ -200,7 +200,7 @@ export default function move(fen: FEN, UCIMove: string) {
     fullCount: newFullCount,
     lastMove,
   } = handleMove(position, start, stop, promType);
-  const newFen = generateFEN(
+  const newFen = FEN.generate(
     newBoard, newTurn, newCastling, newEnPassant,
     newCountFiftyMove, newFullCount,
   );

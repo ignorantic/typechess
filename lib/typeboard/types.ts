@@ -16,8 +16,6 @@ export type Castling = {
   2: number;
 };
 
-export type FEN = string;
-
 export type Ranks = string[];
 
 export type Piece = {
@@ -43,6 +41,6 @@ export type Position = {
   halfCount: number;
   countFiftyMove: number;
   enPassant: Square | null;
-  fen: FEN;
+  fen: string;
   lastMove: string | null;
 }

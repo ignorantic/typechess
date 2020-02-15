@@ -1,6 +1,6 @@
-import { parseFEN } from './fen';
+import FEN from './FEN';
 import { isSquare, getMoves } from './utils';
-import { FEN, Position } from './types';
+import { Position } from './types';
 
 function markMoves(position: Position, file: number, rank: number) {
   const { board } = position;
@@ -15,9 +15,9 @@ function markMoves(position: Position, file: number, rank: number) {
   return { markedBoard, isMarked };
 }
 
-export default function select(fen: FEN, file: number, rank: number) {
+export default function select(fen: string, file: number, rank: number) {
   if (!isSquare(file, rank)) return null;
-  const position = parseFEN(fen);
+  const position = FEN.parse(fen);
   const { board, turn } = position;
   let newBoard;
   let isMarked;
