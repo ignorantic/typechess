@@ -1,8 +1,8 @@
-import { parseFEN } from './fen';
+import FEN from './FEN';
 import move from './move';
 import { toUCI } from './notation';
 import {
-  Color, PieceType, Rank, File, Board, Square, Position, FEN,
+  Color, PieceType, Rank, File, Board, Square, Position,
 } from './types';
 
 export function isSquare(a: number | Square, b?: number) {
@@ -217,10 +217,10 @@ function getPawnCaptures(position: Position, file: File, targetRank: Rank, color
   return mvs;
 }
 
-export function isInCheck(param: FEN | Position, color: Color): boolean {
+export function isInCheck(param: string | Position, color: Color): boolean {
   let position;
   if (typeof param === 'string') {
-    position = parseFEN(param);
+    position = FEN.parse(param);
   } else if (typeof param === 'object') {
     position = param;
   } else {
@@ -237,7 +237,7 @@ export function isInCheck(param: FEN | Position, color: Color): boolean {
   return false;
 }
 
-export function willBeInCheck(fen: FEN, turn: 1 | 2, start: Square, stop: Square): boolean {
+export function willBeInCheck(fen: string, turn: 1 | 2, start: Square, stop: Square): boolean {
   const uciPath = toUCI(start, stop);
   if (uciPath === null) {
     return false;
@@ -336,15 +336,15 @@ function getAllMoves(position: Position): Square[] {
   return allMoves;
 }
 
-export function isCheckmate(fen: FEN): boolean {
-  const position = parseFEN(fen);
+export function isCheckmate(fen: string): boolean {
+  const position = FEN.parse(fen);
   const { turn } = position;
   if (!isInCheck(fen, turn)) return false;
   const allMoves = getAllMoves(position);
   return !allMoves.length;
 }
 
-export function willBeCheckmate(fen: FEN, start: Square, stop: Square): boolean {
+export function willBeCheckmate(fen: string, start: Square, stop: Square): boolean {
   const uciMove = toUCI(start, stop);
   if (uciMove === null) {
     return false;
