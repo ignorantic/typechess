@@ -189,14 +189,6 @@ function getCastlingMove(position: Position, file: File, rank: Rank): Square[] {
   return result;
 }
 
-/**
- * Return array of captures for pawn.
- * @param {Object} position
- * @param {number} file
- * @param {number} targetRank
- * @param {number} color
- * @returns {Array}
- */
 function getPawnCaptures(position: Position, file: File, targetRank: Rank, color: Color): Square[] {
   const { board, enPassant } = position;
   const mvs: Square[] = [];

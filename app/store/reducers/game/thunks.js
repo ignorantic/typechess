@@ -1,14 +1,14 @@
 import { actions } from './reducer';
 import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/typeboard/notation';
 import { isCheckmate, isInCheck } from '../../../../lib/typeboard/utils';
-import select from '../../../../lib/typeboard/select';
 import move from '../../../../lib/typeboard/move';
+import Chess from '../../../../lib/typeboard/Chess';
 
 export function selectSquare(file, rank, mouse) {
   return (dispatch, getState) => {
     let uiPayload = null;
     const { game: { fen } } = getState();
-    const newPosition = select(fen, file, rank);
+    const newPosition = Chess.arrange(fen).select(file, rank).getPosition();
     const { isMarked } = newPosition;
     if (mouse && isMarked) uiPayload = [file, rank];
     const payload = newPosition;

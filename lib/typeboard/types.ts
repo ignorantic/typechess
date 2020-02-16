@@ -43,4 +43,6 @@ export type Position = {
   enPassant: Square | null;
   fen: string;
   lastMove: string | null;
+  selected?: Square | null;
+  isMarked?: boolean;
 }

@@ -6,8 +6,8 @@ import { Board } from '../../../../lib/typeboard/types';
 export type Move = string;
 
 export interface Square {
-  readonly file: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  readonly rank: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  readonly file: number;
+  readonly rank: number;
 }
 
 interface Line {
@@ -26,7 +26,7 @@ interface GameState {
   readonly currentLine: number;
   readonly lines: Array<Array<Line>>;
   readonly lastMove: Move | null;
-  readonly selected: Square | null;
+  readonly selected?: Square | null;
 }
 
 const initialFen = FEN.getInitial();
