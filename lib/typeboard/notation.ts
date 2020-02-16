@@ -13,24 +13,28 @@ export function squareToUCI(file: number, rank: number) {
   return String.fromCharCode(file + shiftFile) + (rank + shiftRank);
 }
 
-export function UCIToSquare(move: string): Square | null {
+export function UCIToSquare(move: string): Square {
   const shiftFile = 97;
   const shiftRank = 1;
-  if (move.length !== 2 || typeof +move[1] !== 'number') return null;
+  if (move.length !== 2 || typeof +move[1] !== 'number') {
+    throw new TypeError('Invalid move.');
+  }
   const alg = move.toLowerCase();
   const result = {
     file: alg.charCodeAt(0) - shiftFile,
     rank: Number(alg[1]) - shiftRank,
   };
-  if (!isSquare(result.file, result.rank)) return null;
+  if (!isSquare(result.file, result.rank)) {
+    throw new TypeError('Invalid move.');
+  }
   return result;
 }
 
 export function UCIToAN(fen: string, move: string, pieces: string[]) {
   const { board, turn } = FEN.parse(fen);
   // TODO: avoid the hack
-  const startSquare: Square = UCIToSquare(move.slice(0, 2)) || { file: 0, rank: 0 };
-  const stopSquare: Square = UCIToSquare(move.slice(2, 4)) || { file: 0, rank: 0 };
+  const startSquare: Square = UCIToSquare(move.slice(0, 2));
+  const stopSquare: Square = UCIToSquare(move.slice(2, 4));
 
   function filterValidSquare(squares: Square[], type: PieceType) {
     return squares.filter((item) => (
@@ -101,26 +105,4 @@ export function toUCI(start: Square, stop: Square, promType: PieceType = null): 
   const pieces = ['', 'r', 'n', 'b', 'q'];
   const pieceTypeUCI = (promType && pieces[promType]) || '';
   return `${startUCI}${stopUCI}${pieceTypeUCI}`;
-}
-
-export function toPieceType(piece: string | number): PieceType {
-  const p: PieceType = 0;
-  const r: PieceType = 1;
-  const n: PieceType = 2;
-  const b: PieceType = 3;
-  const q: PieceType = 4;
-  const k: PieceType = 5;
-
-  if (typeof piece === 'number') {
-    return [r, n, b, q, k].find((type) => type) || p;
-  }
-
-  const key: string = piece.toLowerCase();
-  if (key !== 'r' && key !== 'n' && key !== 'b' && key !== 'q' && key !== 'k') {
-    return p;
-  }
-
-  return {
-    r, n, b, q, k,
-  }[key];
 }

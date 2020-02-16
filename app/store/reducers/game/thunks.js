@@ -1,8 +1,7 @@
-import { actions } from './reducer';
+import Chess from '../../../../lib/typeboard/Chess';
 import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/typeboard/notation';
 import { isCheckmate, isInCheck } from '../../../../lib/typeboard/utils';
-import move from '../../../../lib/typeboard/move';
-import Chess from '../../../../lib/typeboard/Chess';
+import { actions } from './reducer';
 
 export function selectSquare(file, rank, mouse) {
   return (dispatch, getState) => {
@@ -49,7 +48,7 @@ export function moveToSquare(file, rank) {
     } = getState();
     const start = squareToUCI(selected.file, selected.rank);
     const UCIMove = `${start}${stop}`;
-    const newPosition = move(fen, UCIMove);
+    const newPosition = Chess.arrange(fen).move(UCIMove).getPosition();
     const { turn, lastMove, fen: newFen } = newPosition;
     const newLines = writeMove(lines, currentLine, halfCount, lastMove, newFen);
     const check = isInCheck(newFen, turn);

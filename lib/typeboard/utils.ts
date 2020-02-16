@@ -1,9 +1,9 @@
 import FEN from './FEN';
-import move from './move';
 import { toUCI } from './notation';
 import {
   Color, PieceType, Rank, File, Board, Square, Position,
 } from './types';
+import Chess from './Chess';
 
 export function isSquare(a: number | Square, b?: number) {
   if (a === undefined || a === null || b === null) return false;
@@ -235,7 +235,7 @@ export function willBeInCheck(fen: string, turn: 1 | 2, start: Square, stop: Squ
     return false;
   }
 
-  const result = move(fen, uciPath);
+  const result = Chess.arrange(fen).move(uciPath).getPosition();
   if (result === null) {
     return false;
   }
@@ -341,7 +341,7 @@ export function willBeCheckmate(fen: string, start: Square, stop: Square): boole
   if (uciMove === null) {
     return false;
   }
-  const result = move(fen, uciMove);
+  const result = Chess.arrange(fen).move(uciMove).getPosition();
   if (result === null) {
     return false;
   }

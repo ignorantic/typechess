@@ -48,14 +48,10 @@ class FEN {
     };
   }
 
-  static generate(
-    board: Board,
-    turn: number,
-    castling: Castling,
-    enPassant: Square | null,
-    countFiftyMove: number,
-    fullCount: number,
-  ): string {
+  static generate(position: Position): string {
+    const {
+      board, turn, castling, enPassant, countFiftyMove, fullCount,
+    } = position;
     const bd = FEN.getBoard(board);
     const tn = FEN.getTurn(turn);
     const cs = FEN.getCastling(castling);
@@ -140,7 +136,7 @@ class FEN {
     return result;
   }
 
-  private static toPieceType(piece: string): PieceType {
+  public static toPieceType(piece: string): PieceType {
     const p: PieceType = 0;
     const r: PieceType = 1;
     const n: PieceType = 2;

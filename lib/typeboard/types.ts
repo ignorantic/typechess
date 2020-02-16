@@ -16,6 +16,8 @@ export type Castling = {
   2: number;
 };
 
+export type Turn = 1 | 2;
+
 export type Ranks = string[];
 
 export type Piece = {
@@ -36,7 +38,7 @@ export type Point = {
 export type Position = {
   board: Board;
   castling: Castling;
-  turn: 1 | 2;
+  turn: Turn;
   fullCount: number;
   halfCount: number;
   countFiftyMove: number;
