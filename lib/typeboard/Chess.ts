@@ -26,10 +26,6 @@ class Chess {
     return this.position.board[file][rank];
   }
 
-  public static arrange(fen: string): Chess {
-    return new Chess(fen);
-  }
-
   public getFen(): string {
     return FEN.generate(this.position);
   }
@@ -38,55 +34,118 @@ class Chess {
     return this.position.turn;
   }
 
-  public move(UCIMove: string) {
-    if (UCIMove.length < 4 || UCIMove.length > 5) return this;
-    const start = UCIToSquare(UCIMove.slice(0, 2));
-    const stop = UCIToSquare(UCIMove.slice(2, 4));
-    const promType = UCIMove[4] ? FEN.toPieceType(UCIMove[4]) : 4;
+  public static arrange(fen: string): Chess {
+    return new Chess(fen);
+  }
 
-    if (start === null || stop === null) return this;
+  public select(file: number, rank: number): Chess {
+    if (!Chess.isSquare(file, rank)) {
+      throw new TypeError('Invalid square');
+    }
+    const { board, turn } = this.position;
+    let newBoard;
+    let isMarked;
+    let markedPosition = null;
+    if (board[file][rank].piece.color === turn) {
+      markedPosition = this.markMoves(file, rank);
+    }
 
-    this.handleMove(start, stop, promType);
-    const newFen = this.getFen();
+    if (markedPosition === null) {
+      newBoard = board;
+    } else {
+      const { markedBoard, isMarked: marked } = markedPosition;
+      newBoard = markedBoard;
+      isMarked = marked;
+    }
+    newBoard[file][rank].selected = true;
     this.setPosition({
       ...this.position,
-      fen: newFen,
+      board: newBoard,
+      selected: { file, rank },
+      isMarked,
     });
+    return this;
+  }
+
+  public move(UCIMove: string) {
+    const [start, stop, type, color, promType] = this.prepareToMove(UCIMove);
+    this.makeMove(start, stop, promType);
+    this.checkAfterMove(type, color, start);
 
     return this;
   }
 
-  private passTurn(): Turn {
-    return this.position.turn === 1 ? 2 : 1;
-  }
+  private prepareToMove(UCIMove: string): [Square, Square, PieceType, Color, PieceType] {
+    if (UCIMove.length < 4 || UCIMove.length > 5) {
+      throw new TypeError('Invalid move.');
+    }
+    const start = UCIToSquare(UCIMove.slice(0, 2));
+    const stop = UCIToSquare(UCIMove.slice(2, 4));
+    const promType = UCIMove[4] ? FEN.toPieceType(UCIMove[4]) : 4;
 
-  private handleMove(start: Square, stop: Square, promType: PieceType): void {
+    if (start === null || stop === null) {
+      throw new TypeError('Invalid move.');
+    }
+
     const { board } = this.position;
 
     const { type, color } = board[start.file][start.rank].piece;
+    return [start, stop, type, color, promType];
+  }
 
-    this.makeMove(type, color, start, stop, promType);
+  private makeMove(
+    start: Square,
+    stop: Square,
+    promType: PieceType = 4,
+  ): void {
+    const { board } = this.position;
+    const { type, color } = board[start.file][start.rank].piece;
+    const newCountFiftyMove = this.checkFiftyMove(type, color, stop);
+    // eslint-disable-next-line prefer-const
+    let [enPassant, newBoard] = this.handleEnPassant(start, stop);
+    let lastMove: string | null;
+    // check castling
+    if (isCastling(type, start.file, stop.file)) {
+      newBoard = Chess.doCastling(newBoard, stop);
+      lastMove = toUCI(start, stop);
+    } else {
+      // check pawn promotion
+      if (isPawnPromotion(type, color, stop.rank)) {
+        newBoard[stop.file][stop.rank].piece = { type: promType, color };
+        lastMove = toUCI(start, stop, promType);
+      } else {
+        newBoard[stop.file][stop.rank].piece = { type, color };
+        lastMove = toUCI(start, stop);
+      }
+      newBoard[start.file][start.rank].piece = { type: null, color: null };
+    }
 
-    const { castling, turn, fullCount } = this.checkAfterMove(type, color, start);
     this.setPosition({
       ...this.position,
-      castling,
-      turn,
-      fullCount,
+      board: newBoard,
+      countFiftyMove: newCountFiftyMove,
+      enPassant,
+      lastMove,
     });
   }
 
-  private checkAfterMove(type: PieceType, color: Color, start: Square): Position {
+  private checkAfterMove(type: PieceType, color: Color, start: Square): void {
     const { castling, fullCount } = this.position;
     const newCastling = Chess.getNewCastling(castling, color, type, start);
     const newFullCount = color === 2 ? fullCount + 1 : fullCount;
     const newTurn = this.passTurn();
-    return {
+    const newFen = this.getFen();
+    this.setPosition({
       ...this.position,
       turn: newTurn,
       castling: newCastling,
       fullCount: newFullCount,
-    };
+      fen: newFen,
+    });
+  }
+
+  private passTurn(): Turn {
+    return this.position.turn === 1 ? 2 : 1;
   }
 
   private static getNewCastling(
@@ -119,67 +178,6 @@ class Chess {
     return newCastling;
   }
 
-  private makeMove(
-    type: PieceType | null,
-    color: Color | null,
-    start: Square,
-    stop: Square,
-    promType: PieceType = 4,
-  ): void {
-    const newCountFiftyMove = this.checkFiftyMove(type, color, stop);
-    this.handleEnPassant(start, stop);
-    const { enPassant: newEnPassant } = this.position;
-    let { board: newBoard } = this.position;
-    let lastMove: string | null;
-    // check castling
-    if (isCastling(type, start.file, stop.file)) {
-      newBoard = Chess.doCastling(newBoard, stop);
-      lastMove = toUCI(start, stop);
-    } else {
-      // check pawn promotion
-      if (isPawnPromotion(type, color, stop.rank)) {
-        newBoard[stop.file][stop.rank].piece = { type: promType, color };
-        lastMove = toUCI(start, stop, promType);
-      } else {
-        newBoard[stop.file][stop.rank].piece = { type, color };
-        lastMove = toUCI(start, stop);
-      }
-      newBoard[start.file][start.rank].piece = { type: null, color: null };
-    }
-
-    this.setPosition({
-      ...this.position,
-      board: newBoard,
-      countFiftyMove: newCountFiftyMove,
-      enPassant: newEnPassant,
-      lastMove,
-    });
-  }
-
-  public select(file: number, rank: number): Chess {
-    if (!Chess.isSquare(file, rank)) return this;
-    const { board, turn } = this.position;
-    let newBoard;
-    let isMarked;
-    let markedPosition = null;
-    if (board[file][rank].piece.color === turn) {
-      markedPosition = this.markMoves(file, rank);
-    }
-
-    if (markedPosition === null) {
-      newBoard = board;
-    } else {
-      const { markedBoard, isMarked: marked } = markedPosition;
-      newBoard = markedBoard;
-      isMarked = marked;
-    }
-    newBoard[file][rank].selected = true;
-    this.setPosition({
-      ...this.position, board: newBoard, selected: { file, rank }, isMarked,
-    });
-    return this;
-  }
-
   private static doCastling(board: Board, kingStop: Square) {
     const newBoard = [...board];
     const { file, rank } = kingStop;
@@ -193,7 +191,7 @@ class Chess {
     return newBoard;
   }
 
-  private handleEnPassant(start: Square, stop: Square): void {
+  private handleEnPassant(start: Square, stop: Square): [Square | null, Board] {
     const { board, enPassant } = this.position;
     const newBoard = [...board];
     let newEnPassant = null;
@@ -207,7 +205,7 @@ class Chess {
       }
     }
 
-    this.setPosition({ ...this.position, enPassant: newEnPassant, board: newBoard });
+    return [newEnPassant, newBoard];
   }
 
   private checkEnPassant(square: Square): Square | null {

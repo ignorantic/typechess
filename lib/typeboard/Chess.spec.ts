@@ -67,9 +67,19 @@ describe('Chess', () => {
     const ANOTHER_TEST_FEN = '8/p2p4/1p4k1/1P6/P7/8/3PP2p/2K5 b - - 0 0';
 
     it('should be OK', () => {
-      expect(Chess.arrange(TEST_FEN).move('e2e4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/3qPP1p/2n2NP1/PP5P/RNBQK2R b KQkq - 0 1');
-      expect(Chess.arrange(TEST_FEN).move('f3d4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/3N1P1p/2n3P1/PP2P2P/RNBQK2R b KQkq - 0 1');
-      expect(Chess.arrange(TEST_FEN).move('g3h4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/3q1P1P/2n2N2/PP2P2P/RNBQK2R b KQkq - 0 1');
+      const chess1 = Chess.arrange(TEST_FEN);
+      expect(chess1.move('e2e4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/3qPP1p/2n2NP1/PP5P/RNBQK2R b KQkq - 0 1');
+      expect(chess1.move('d4f2').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/4PP1p/2n2NP1/PP3q1P/RNBQK2R w KQkq - 1 2');
+      expect(chess1.move('e1f2').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/4PP1p/2n2NP1/PP3K1P/RNBQ3R b kq - 0 2');
+      expect(chess1.move('e8d7').getFen()).toEqual('r6r/pp1k1pp1/b2P4/b1pP1n1B/4PP1p/2n2NP1/PP3K1P/RNBQ3R w - - 1 3');
+      const chess2 = Chess.arrange(TEST_FEN);
+      expect(chess2.move('f3d4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/3N1P1p/2n3P1/PP2P2P/RNBQK2R b KQkq - 0 1');
+      expect(chess2.move('c5d4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b2P1n1B/3p1P1p/2n3P1/PP2P2P/RNBQK2R w KQkq - 0 2');
+      expect(chess2.move('d6d7').getFen()).toEqual('r3k2r/pp1P1pp1/b7/b2P1n1B/3p1P1p/2n3P1/PP2P2P/RNBQK2R b KQkq - 0 2');
+      const chess3 = Chess.arrange(TEST_FEN);
+      expect(chess3.move('g3h4').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/3q1P1P/2n2N2/PP2P2P/RNBQK2R b KQkq - 0 1');
+      expect(chess3.move('d4g1').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/5P1P/2n2N2/PP2P2P/RNBQK1qR w KQkq - 1 2');
+      expect(chess3.move('e1d2').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/5P1P/2n2N2/PP1KP2P/RNBQ2qR b kq - 2 2');
     });
 
     it('should change turn', () => {

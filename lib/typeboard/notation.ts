@@ -32,7 +32,6 @@ export function UCIToSquare(move: string): Square {
 
 export function UCIToAN(fen: string, move: string, pieces: string[]) {
   const { board, turn } = FEN.parse(fen);
-  // TODO: avoid the hack
   const startSquare: Square = UCIToSquare(move.slice(0, 2));
   const stopSquare: Square = UCIToSquare(move.slice(2, 4));
 
