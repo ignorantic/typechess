@@ -5,7 +5,7 @@ import {
   getMoves, isCastling, isEnPassant, isFoe, isFoesPawn, isPawnPromotion,
 } from './utils';
 import FEN from './FEN';
-import { toUCI, UCIToSquare } from './notation';
+import Notation from './Notation';
 
 class Chess {
   private position: Position;
@@ -14,8 +14,8 @@ class Chess {
     this.position = FEN.parse(fen);
   }
 
-  public setPosition(value: Position) {
-    this.position = value;
+  public setPosition(value: object) {
+    this.position = { ...this.position, ...value };
   }
 
   public getPosition(): Position {
@@ -24,10 +24,6 @@ class Chess {
 
   public getPoint(file: number, rank: number): Point {
     return this.position.board[file][rank];
-  }
-
-  public getFen(): string {
-    return FEN.generate(this.position);
   }
 
   public getTurn(): Turn {
@@ -59,7 +55,6 @@ class Chess {
     }
     newBoard[file][rank].selected = true;
     this.setPosition({
-      ...this.position,
       board: newBoard,
       selected: { file, rank },
       isMarked,
@@ -70,6 +65,7 @@ class Chess {
   public move(UCIMove: string) {
     const [start, stop, type, color, promType] = this.prepareToMove(UCIMove);
     this.makeMove(start, stop, promType);
+    this.passTurn();
     this.checkAfterMove(type, color, start);
 
     return this;
@@ -79,8 +75,8 @@ class Chess {
     if (UCIMove.length < 4 || UCIMove.length > 5) {
       throw new TypeError('Invalid move.');
     }
-    const start = UCIToSquare(UCIMove.slice(0, 2));
-    const stop = UCIToSquare(UCIMove.slice(2, 4));
+    const start = Notation.UCIToSquare(UCIMove.slice(0, 2));
+    const stop = Notation.UCIToSquare(UCIMove.slice(2, 4));
     const promType = UCIMove[4] ? FEN.toPieceType(UCIMove[4]) : 4;
 
     if (start === null || stop === null) {
@@ -107,21 +103,20 @@ class Chess {
     // check castling
     if (isCastling(type, start.file, stop.file)) {
       newBoard = Chess.doCastling(newBoard, stop);
-      lastMove = toUCI(start, stop);
+      lastMove = Notation.toUCI(start, stop);
     } else {
       // check pawn promotion
       if (isPawnPromotion(type, color, stop.rank)) {
         newBoard[stop.file][stop.rank].piece = { type: promType, color };
-        lastMove = toUCI(start, stop, promType);
+        lastMove = Notation.toUCI(start, stop, promType);
       } else {
         newBoard[stop.file][stop.rank].piece = { type, color };
-        lastMove = toUCI(start, stop);
+        lastMove = Notation.toUCI(start, stop);
       }
       newBoard[start.file][start.rank].piece = { type: null, color: null };
     }
 
     this.setPosition({
-      ...this.position,
       board: newBoard,
       countFiftyMove: newCountFiftyMove,
       enPassant,
@@ -133,19 +128,21 @@ class Chess {
     const { castling, fullCount } = this.position;
     const newCastling = Chess.getNewCastling(castling, color, type, start);
     const newFullCount = color === 2 ? fullCount + 1 : fullCount;
-    const newTurn = this.passTurn();
     const newFen = this.getFen();
     this.setPosition({
-      ...this.position,
-      turn: newTurn,
       castling: newCastling,
       fullCount: newFullCount,
       fen: newFen,
     });
   }
 
-  private passTurn(): Turn {
-    return this.position.turn === 1 ? 2 : 1;
+  private passTurn(): void {
+    const nextTurn = this.position.turn === 1 ? 2 : 1;
+    this.setPosition({ turn: nextTurn });
+  }
+
+  public getFen(): string {
+    return FEN.generate(this.position);
   }
 
   private static getNewCastling(

@@ -58,6 +58,12 @@ describe('Chess', () => {
       expect(Chess.arrange(BLACK_CASTLING_FEN).select(4, 7).isMarked(2, 7)).toBeTruthy();
       expect(Chess.arrange(BLACK_CASTLING_FEN).select(4, 7).isMarked(1, 7)).toBeFalsy();
     });
+
+    it('shouldn\'t pass turn', () => {
+      const chess = Chess.arrange(TEST_FEN);
+      expect(chess.getTurn()).toEqual(1);
+      expect(chess.select(0, 1).getTurn()).toEqual(1);
+    });
   });
 
   describe('Move', () => {
@@ -82,12 +88,24 @@ describe('Chess', () => {
       expect(chess3.move('e1d2').getFen()).toEqual('r3k2r/pp3pp1/b2P4/b1pP1n1B/5P1P/2n2N2/PP1KP2P/RNBQ2qR b kq - 2 2');
     });
 
-    it('should change turn', () => {
+    it('should change turn in chaining', () => {
       const chess = Chess.arrange(TEST_FEN);
       expect(chess.getTurn()).toEqual(1);
       expect(chess.move('e2e4').getTurn()).toEqual(2);
       expect(chess.move('d4d1').getTurn()).toEqual(1);
       expect(chess.move('e1f2').getTurn()).toEqual(2);
+    });
+
+    it('should change turn in position.fen', () => {
+      const chess1 = Chess.arrange(TEST_FEN);
+      expect(chess1.getTurn()).toEqual(1);
+      expect(chess1.move('e2e4').getTurn()).toEqual(2);
+      const chess2 = Chess.arrange(chess1.getPosition().fen);
+      expect(chess2.getTurn()).toEqual(2);
+      expect(chess2.move('d4d1').getTurn()).toEqual(1);
+      const chess3 = Chess.arrange(chess2.getPosition().fen);
+      expect(chess3.getTurn()).toEqual(1);
+      expect(chess3.move('e1f2').getTurn()).toEqual(2);
     });
 
     it('return FEN if OK with en passant', () => {

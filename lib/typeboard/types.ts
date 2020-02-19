@@ -16,9 +16,12 @@ export type Castling = {
   2: number;
 };
 
+export type EnPassant = Square | null;
+
 export type Turn = 1 | 2;
 
 export type Ranks = string[];
+export type Tail = string[];
 
 export type Piece = {
   type: PieceType;

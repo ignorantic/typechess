@@ -1,5 +1,5 @@
 import FEN from './FEN';
-import { toUCI } from './notation';
+import Notation from './Notation';
 import {
   Color, PieceType, Rank, File, Board, Square, Position,
 } from './types';
@@ -52,12 +52,6 @@ export function isEmpty(board: Board, file: File, rank: Rank): boolean {
   return board[file][rank].piece.type === null;
 }
 
-/**
- * Check utils the capturing en-passant possible.
- * @param {{file: number, rank: number}} square
- * @param {?{file: number, rank: number}} enPassant
- * @returns {boolean}
- */
 export function isEnPassant(square: Square, enPassant: Square | null): boolean {
   if (!enPassant) return false;
   return enPassant.file === square.file && enPassant.rank === square.rank;
@@ -230,7 +224,7 @@ export function isInCheck(param: string | Position, color: Color): boolean {
 }
 
 export function willBeInCheck(fen: string, turn: 1 | 2, start: Square, stop: Square): boolean {
-  const uciPath = toUCI(start, stop);
+  const uciPath = Notation.toUCI(start, stop);
   if (uciPath === null) {
     return false;
   }
@@ -337,7 +331,7 @@ export function isCheckmate(fen: string): boolean {
 }
 
 export function willBeCheckmate(fen: string, start: Square, stop: Square): boolean {
-  const uciMove = toUCI(start, stop);
+  const uciMove = Notation.toUCI(start, stop);
   if (uciMove === null) {
     return false;
   }
