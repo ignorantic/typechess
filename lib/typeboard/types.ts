@@ -16,7 +16,12 @@ export type Castling = {
   2: number;
 };
 
+export type EnPassant = Square | null;
+
+export type Turn = 1 | 2;
+
 export type Ranks = string[];
+export type Tail = string[];
 
 export type Piece = {
   type: PieceType;
@@ -36,11 +41,13 @@ export type Point = {
 export type Position = {
   board: Board;
   castling: Castling;
-  turn: 1 | 2;
+  turn: Turn;
   fullCount: number;
   halfCount: number;
   countFiftyMove: number;
   enPassant: Square | null;
   fen: string;
   lastMove: string | null;
+  selected?: Square | null;
+  isMarked?: boolean;
 }

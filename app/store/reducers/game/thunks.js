@@ -1,14 +1,13 @@
-import { actions } from './reducer';
-import { squareToUCI, UCIToFAN, UCIToSAN } from '../../../../lib/typeboard/notation';
+import Chess from '../../../../lib/typeboard/Chess';
+import Notation from '../../../../lib/typeboard/Notation';
 import { isCheckmate, isInCheck } from '../../../../lib/typeboard/utils';
-import select from '../../../../lib/typeboard/select';
-import move from '../../../../lib/typeboard/move';
+import { actions } from './reducer';
 
 export function selectSquare(file, rank, mouse) {
   return (dispatch, getState) => {
     let uiPayload = null;
     const { game: { fen } } = getState();
-    const newPosition = select(fen, file, rank);
+    const newPosition = Chess.arrange(fen).select(file, rank).getPosition();
     const { isMarked } = newPosition;
     if (mouse && isMarked) uiPayload = [file, rank];
     const payload = newPosition;
@@ -29,8 +28,8 @@ export function moveToSquare(file, rank) {
           ...line,
           {
             move: lastMove,
-            san: UCIToSAN(prevFen, lastMove),
-            fan: UCIToFAN(prevFen, lastMove),
+            san: Notation.UCIToSAN(prevFen, lastMove),
+            fan: Notation.UCIToFAN(prevFen, lastMove),
             fen,
           },
         ];
@@ -41,15 +40,15 @@ export function moveToSquare(file, rank) {
   }
 
   return (dispatch, getState) => {
-    const stop = squareToUCI(file, rank);
+    const stop = Notation.squareToUCI(file, rank);
     const {
       game: {
         halfCount, fen, lines, currentLine, selected,
       },
     } = getState();
-    const start = squareToUCI(selected.file, selected.rank);
+    const start = Notation.squareToUCI(selected.file, selected.rank);
     const UCIMove = `${start}${stop}`;
-    const newPosition = move(fen, UCIMove);
+    const newPosition = Chess.arrange(fen).move(UCIMove).getPosition();
     const { turn, lastMove, fen: newFen } = newPosition;
     const newLines = writeMove(lines, currentLine, halfCount, lastMove, newFen);
     const check = isInCheck(newFen, turn);

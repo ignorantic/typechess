@@ -1,9 +1,9 @@
 import FEN from './FEN';
-import move from './move';
-import { toUCI } from './notation';
+import Notation from './Notation';
 import {
   Color, PieceType, Rank, File, Board, Square, Position,
 } from './types';
+import Chess from './Chess';
 
 export function isSquare(a: number | Square, b?: number) {
   if (a === undefined || a === null || b === null) return false;
@@ -52,12 +52,6 @@ export function isEmpty(board: Board, file: File, rank: Rank): boolean {
   return board[file][rank].piece.type === null;
 }
 
-/**
- * Check utils the capturing en-passant possible.
- * @param {{file: number, rank: number}} square
- * @param {?{file: number, rank: number}} enPassant
- * @returns {boolean}
- */
 export function isEnPassant(square: Square, enPassant: Square | null): boolean {
   if (!enPassant) return false;
   return enPassant.file === square.file && enPassant.rank === square.rank;
@@ -189,14 +183,6 @@ function getCastlingMove(position: Position, file: File, rank: Rank): Square[] {
   return result;
 }
 
-/**
- * Return array of captures for pawn.
- * @param {Object} position
- * @param {number} file
- * @param {number} targetRank
- * @param {number} color
- * @returns {Array}
- */
 function getPawnCaptures(position: Position, file: File, targetRank: Rank, color: Color): Square[] {
   const { board, enPassant } = position;
   const mvs: Square[] = [];
@@ -238,12 +224,12 @@ export function isInCheck(param: string | Position, color: Color): boolean {
 }
 
 export function willBeInCheck(fen: string, turn: 1 | 2, start: Square, stop: Square): boolean {
-  const uciPath = toUCI(start, stop);
+  const uciPath = Notation.toUCI(start, stop);
   if (uciPath === null) {
     return false;
   }
 
-  const result = move(fen, uciPath);
+  const result = Chess.arrange(fen).move(uciPath).getPosition();
   if (result === null) {
     return false;
   }
@@ -345,11 +331,11 @@ export function isCheckmate(fen: string): boolean {
 }
 
 export function willBeCheckmate(fen: string, start: Square, stop: Square): boolean {
-  const uciMove = toUCI(start, stop);
+  const uciMove = Notation.toUCI(start, stop);
   if (uciMove === null) {
     return false;
   }
-  const result = move(fen, uciMove);
+  const result = Chess.arrange(fen).move(uciMove).getPosition();
   if (result === null) {
     return false;
   }

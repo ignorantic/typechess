@@ -1,8 +1,8 @@
 import { times } from 'ramda';
 import {
-  Board, Castling, Piece, PieceType, Position, Ranks, Square,
+  Board, Castling, EnPassant, Piece, PieceType, Position, Ranks, Square, Tail,
 } from './types';
-import { squareToUCI } from './notation';
+import Notation from './Notation';
 import { isSquare } from './utils';
 
 class FEN {
@@ -12,8 +12,18 @@ class FEN {
 
   private static EMPTY_PIECE: Piece = { type: null, color: null };
 
+  private readonly fen: string;
+
+  constructor(fen: string) {
+    this.fen = fen;
+  }
+
   static getInitial(): string {
     return FEN.INITIAL;
+  }
+
+  static parseInitial(): Position {
+    return FEN.parse(FEN.INITIAL);
   }
 
   static getEmptyPiece(): Piece {
@@ -21,14 +31,46 @@ class FEN {
   }
 
   static parse(fen: string): Position {
-    const hash = FEN.split(fen);
-    const { ranks, tail } = hash;
-    if (ranks.length !== 8 || tail.length !== 5) {
-      return FEN.parse(FEN.INITIAL);
+    try {
+      const result = FEN.split(fen);
+      const [ranks, tail] = result;
+      return FEN.parseRanksAndTail(fen, ranks, tail);
+    } catch (e) {
+      return FEN.parseInitial();
+    }
+  }
+
+  static generate(position: Position): string {
+    const {
+      board, turn, castling, enPassant, countFiftyMove, fullCount,
+    } = position;
+    const bd = FEN.getBoard(board);
+    const tn = FEN.getTurn(turn);
+    const cs = FEN.getCastling(castling);
+    const ep = FEN.getEnPassant(enPassant);
+    const cn = FEN.getCounts(countFiftyMove, fullCount);
+    return `${bd} ${tn} ${cs} ${ep} ${cn}`;
+  }
+
+  private static split(fen: string): [Ranks, Tail] {
+    const ranks = fen.split('/');
+    if (ranks.length !== 8) {
+      throw new TypeError('Number of ranks must be equal to 8.');
     }
 
-    const board = FEN.parseBoard(ranks);
+    const tail = ranks[7].split(' ');
+    [ranks[7]] = tail;
+    tail.shift();
+    ranks.reverse();
+    if (tail.length !== 5) {
+      throw new TypeError('FEN is invalid.');
+    }
 
+    return [ranks, tail];
+  }
+
+  private static parseRanksAndTail(fen: string, ranks: Ranks, tail: Tail): Position {
+    const board = FEN.parseBoard(ranks);
     const turn = FEN.parseTurn(tail[0]);
     const castling = FEN.parseCastling(tail[1]);
     const enPassant = board ? FEN.parseEnPassant(tail[2], board) : null;
@@ -48,43 +90,11 @@ class FEN {
     };
   }
 
-  static generate(
-    board: Board,
-    turn: number,
-    castling: Castling,
-    enPassant: Square | null,
-    countFiftyMove: number,
-    fullCount: number,
-  ): string {
-    const bd = FEN.getBoard(board);
-    const tn = FEN.getTurn(turn);
-    const cs = FEN.getCastling(castling);
-    const ep = FEN.getEnPassant(enPassant);
-    const cn = FEN.getCounts(countFiftyMove, fullCount);
-    return `${bd} ${tn} ${cs} ${ep} ${cn}`;
-  }
-
-  private static split(fen: string): { ranks: string[]; tail: string[] } {
-    const ranks = fen.split('/');
-    if (ranks.length !== 8) {
-      return { ranks: [], tail: [] };
-    }
-
-    const tail = ranks[7].split(' ');
-    [ranks[7]] = tail;
-    tail.shift();
-    ranks.reverse();
-
-    return {
-      ranks,
-      tail,
-    };
-  }
-
   private static parseBoard(ranks: Ranks): Board {
-    let file;
-    let rank;
-    let rankSet;
+    return FEN.fillBoard(ranks);
+  }
+
+  private static getEmptyBoard(): Board {
     const result: Board = [];
     for (let i = 0; i < 8; i += 1) {
       result[i] = [];
@@ -99,30 +109,37 @@ class FEN {
       }
     }
 
+    return result;
+  }
+
+  private static fillBoard(ranks: Ranks): Board {
+    const board = FEN.getEmptyBoard();
+    let i;
+    let j;
+    const pieces = ranks.map((rank: string) => FEN.parseRank(rank));
     let countSquare = 1;
-    for (rank = 0; rank < 8; rank += 1) {
+    for (j = 0; j < 8; j += 1) {
       countSquare += 1;
-      rankSet = FEN.parseRank(ranks[rank]);
-      for (file = 0; file < 8; file += 1) {
+      for (i = 0; i < 8; i += 1) {
         countSquare += 1;
-        result[file][rank] = {
-          ...result[file][rank],
+        board[i][j] = {
+          ...board[i][j],
           color: countSquare % 2 ? 2 : 1,
           piece: {
-            type: rankSet[file].type,
-            color: rankSet[file].color,
+            type: pieces[j][i].type,
+            color: pieces[j][i].color,
           },
         };
       }
     }
 
-    return result;
+    return board;
   }
 
-  private static parseRank(fen: string): Piece[] {
-    const rank: string[] = fen.split('');
+  private static parseRank(rank: string): Piece[] {
+    const result: string[] = rank.split('');
 
-    const pieces = rank.reduce((acc: Piece[], item: string) => {
+    const pieces = result.reduce((acc: Piece[], item: string) => {
       const n = Number(item);
       if (n > 0 && n <= FEN.SIZE) {
         return acc.concat(times(FEN.getEmptyPiece, n));
@@ -140,7 +157,7 @@ class FEN {
     return result;
   }
 
-  private static toPieceType(piece: string): PieceType {
+  public static toPieceType(piece: string): PieceType {
     const p: PieceType = 0;
     const r: PieceType = 1;
     const n: PieceType = 2;
@@ -166,7 +183,9 @@ class FEN {
     let cb = 0;
     let cw = 0;
 
-    if (fen === '-' || fen.length > 4) return { 1: 0, 2: 0 };
+    if (fen === '-' || fen.length > 4) {
+      return { 1: 0, 2: 0 };
+    }
 
     if (fen.includes('K')) cw += 1;
     if (fen.includes('Q')) cw += 2;
@@ -176,16 +195,29 @@ class FEN {
     return { 1: cw, 2: cb };
   }
 
-  private static parseEnPassant(fen: string, board: Board) {
+  private static parseEnPassant(fen: string, board: Board): EnPassant {
     const fileShift = 97;
-    if (fen.length !== 2) return null;
+    if (fen === '-') {
+      return null;
+    }
+    if (fen.length !== 2) {
+      throw TypeError('Invalid en passant state');
+    }
     const rank = +fen[1] - 1;
-    if (rank !== 2 && rank !== 5) return null;
+    if (rank !== 2 && rank !== 5) {
+      throw TypeError('Invalid en passant state');
+    }
     const file = fen.charCodeAt(0) - fileShift;
-    if (file < 0 || file > 7) return null;
-    if (board[file][rank].piece?.type !== null) return null;
-    if (FEN.checkEnPassant(file, rank, board)) return { file, rank };
-    return null;
+    if (file < 0 || file > 7) {
+      throw TypeError('Invalid en passant state');
+    }
+    if (board[file][rank].piece?.type !== null) {
+      throw TypeError('Invalid en passant state');
+    }
+    if (FEN.checkEnPassant(file, rank, board)) {
+      return { file, rank };
+    }
+    throw null;
   }
 
   private static checkEnPassant(file: number, rank: number, board: Board): boolean {
@@ -243,7 +275,7 @@ class FEN {
       return '-';
     }
 
-    return squareToUCI(enPassant.file, enPassant.rank);
+    return Notation.squareToUCI(enPassant.file, enPassant.rank);
   }
 
   private static getTurn(turn: number) {
