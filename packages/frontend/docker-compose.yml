@@ -1,0 +1,10 @@
+version: "3.2"
+services:
+  app:
+    build: .
+    restart: always
+    command: yarn dev
+    ports:
+    - "3000:3000"
+    volumes:
+    - ".:/usr/src/app"
