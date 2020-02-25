@@ -3,8 +3,5 @@
     "packages/*"
   ],
   "npmClient": "yarn",
-  "version": "0.0.0",
-  "script": {
-    "start": "start:docker --stream"
-  }
+  "version": "0.0.1"
 }
