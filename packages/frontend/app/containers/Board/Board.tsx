@@ -1,5 +1,5 @@
 // import libs
-import React, { createElement, FC } from 'react';
+import React, { createElement, FC, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { addIndex, map } from 'ramda';
 import { makeStyles } from '@material-ui/styles';
@@ -10,6 +10,8 @@ import { SquareProps } from '../../common/components/Square/Square';
 // import components
 import Square from '../../common/components/Square';
 import { Piece } from '../../common/interfaces/Piece';
+import dataProvider from '../../../data-provider';
+import { GET_LIST } from '../../../lib/typecore/dataFetchActions';
 
 const useStyles = makeStyles(() => ({
   section: {
@@ -51,6 +53,18 @@ const propTypes = {
 
 const Board: FC<BoardProps> = (props: BoardProps) => {
   const { position, onSelect, onMove } = props;
+
+  // @ts-ignore
+  useEffect(() => {
+    async function fetchData() {
+      return await dataProvider(GET_LIST, 'positions', {
+        sort: { field: 'promo_code', order: 'ASC' },
+        pagination: { page: 1, perPage: 10 },
+      });
+    }
+    fetchData().then((data) => console.log(data));
+  }, []
+);
 
   const mapFile = mapIndexed((square: BoardSquare, rank: number, file: number): JSX.Element => {
     const { piece, color } = square;

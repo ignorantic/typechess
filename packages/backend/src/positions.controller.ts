@@ -7,7 +7,7 @@ export class PositionsController {
   constructor(private readonly service: PositionsService) {}
 
   @Get('positions')
-  getList(@Res() res: Response) {
+  getList(@Res() res: Response): void {
     const result = this.service.getList();
     res.setHeader('X-Total-Count', result.length.toString());
     res.send(result);
