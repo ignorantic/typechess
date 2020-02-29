@@ -11,6 +11,7 @@ const PositionsListPage: NextPage<PositionsListProps> = () => (
 
 PositionsListPage.getInitialProps = async (
   { req }: NextPageContext,
+  // eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<PositionsListProps> => {
   const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
   return { userAgent };

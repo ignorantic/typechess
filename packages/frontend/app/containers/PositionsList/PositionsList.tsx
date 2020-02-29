@@ -1,16 +1,18 @@
 // libs
 import React, { FC, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
+import { connect, useDispatch } from 'react-redux';
+import { values } from 'ramda';
 
 // components
-import { GridList, Container } from '@material-ui/core';
-import { ListResponse } from '../../../data-provider/types';
+import {
+  Container, List, ListItem, ListItemText,
+} from '@material-ui/core';
 
-// helpers
-import dataProvider from '../../../data-provider';
-
-// resources
-import { GET_LIST } from '../../../lib/typecore/dataFetchActions';
+import { compose } from 'redux';
+import { crudGetList } from '../../../lib/typecore/actions/dataActions';
+import { registerResource } from '../../../lib/typecore/actions';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -18,38 +20,77 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type Position = {
+  id: number;
+  fen: string;
+}
+
 interface PositionsListContainerProps {
-  someProp?: string | undefined;
+  positions: Position[];
 }
 
 const propTypes = {
-  //
+  positions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
 };
 
 const defaultProps = {
-  //
+  positions: [],
 };
 
-const PositionsList: FC<PositionsListContainerProps> = () => {
+const PositionsList: FC<PositionsListContainerProps> = (props) => {
+  const { positions } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData: Promise<ListResponse> = dataProvider(GET_LIST, 'positions', {
-      sort: { field: 'promo_code', order: 'ASC' },
-      pagination: { page: 1, perPage: 10 },
-    });
-    fetchData.then((data) => console.log(data));
-    }, []
-  );
+    dispatch(
+      registerResource({
+        name: 'positions',
+        options: {},
+        hasList: true,
+        hasEdit: false,
+        hasShow: false,
+        hasCreate: false,
+      }),
+    );
+    dispatch(
+      crudGetList(
+        'positions',
+        { page: 0, perPage: 10 },
+        { field: 'id', order: 'ASC' },
+      ),
+    );
+  }, []);
 
   return (
     <Container component="section" classes={classes}>
-      <GridList />
+      <List>
+        {
+          positions.map((position) => (
+            <ListItem key={position.id}>
+              <ListItemText primary={position.id} secondary={position.fen} />
+            </ListItem>
+          ))
+        }
+      </List>
     </Container>
   );
 };
 
+// @ts-ignore
 PositionsList.propTypes = propTypes;
 PositionsList.defaultProps = defaultProps;
 
-export default PositionsList;
+// @ts-ignore
+const selectResource = (state, name) => values(state?.admin?.resources[name]?.data);
+
+// @ts-ignore
+const mapStateToProps = (state) => ({
+  positions: selectResource(state, 'positions'),
+});
+
+const enhance = compose(
+  connect(mapStateToProps),
+);
+
+export default enhance(PositionsList);

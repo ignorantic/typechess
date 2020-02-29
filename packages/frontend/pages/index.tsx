@@ -11,6 +11,7 @@ const HomePage: NextPage<HomeProps> = () => (
 
 HomePage.getInitialProps = async (
   { req }: NextPageContext,
+  // eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<HomeProps> => {
   const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
   return { userAgent };

@@ -9,8 +9,8 @@ import {
   UPDATE_MANY,
   DELETE,
   DELETE_MANY,
-} from '../lib/typecore/dataFetchActions';
-import { flattenObject } from '../lib/typecore/fetch'
+} from '../lib/typecore/actions/dataFetchActions';
+import { flattenObject } from '../lib/typecore/fetch';
 import { fetchify, sendify } from '../lib/tools';
 
 /**
@@ -143,23 +143,23 @@ export default (apiUrl, httpClient) => {
     // so we fallback to calling UPDATE n times instead
     if (type === UPDATE_MANY) {
       return Promise.all(
-        params.ids.map(id => httpClient(`${apiUrl}/${resource}/${id}`, {
+        params.ids.map((id) => httpClient(`${apiUrl}/${resource}/${id}`, {
           method: 'PUT',
           body: JSON.stringify(sendify(params.data)),
         })),
-      ).then(responses => ({
-        data: fetchify(responses.map(response => response.json)) || [],
+      ).then((responses) => ({
+        data: fetchify(responses.map((response) => response.json)) || [],
       }));
     }
     // json-server doesn't handle filters on DELETE route,
     // so we fallback to calling DELETE n times instead
     if (type === DELETE_MANY) {
       return Promise.all(
-        params.ids.map(id => httpClient(`${apiUrl}/${resource}/${id}`, {
+        params.ids.map((id) => httpClient(`${apiUrl}/${resource}/${id}`, {
           method: 'DELETE',
         })),
-      ).then(responses => ({
-        data: fetchify(responses.map(response => response.json)) || [],
+      ).then((responses) => ({
+        data: fetchify(responses.map((response) => response.json)) || [],
       }));
     }
     const { url, options } = convertDataRequestToHTTP(
@@ -169,6 +169,6 @@ export default (apiUrl, httpClient) => {
     );
 
     return httpClient(url, options)
-      .then(response => convertHTTPResponse(response, type, resource, params));
+      .then((response) => convertHTTPResponse(response, type, resource, params));
   };
 };
