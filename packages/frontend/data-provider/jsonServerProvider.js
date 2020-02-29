@@ -10,7 +10,7 @@ import {
   DELETE,
   DELETE_MANY,
 } from '../lib/redux-resource/actions/dataFetchActions';
-import { flattenObject } from '../lib/redux-resource/fetch';
+import { flattenObject } from '../lib/redux-resource/util/fetch';
 import { fetchify, sendify } from '../lib/tools';
 
 /**

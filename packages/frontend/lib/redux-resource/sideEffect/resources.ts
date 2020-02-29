@@ -9,7 +9,7 @@ import fetch from './fetch';
 export default (
   dataProvider: DataProvider,
   // authProvider: AuthProvider | null
-) => function* admin() {
+) => function* resources() {
   yield all([
     // auth(authProvider)(),
     // undo(),

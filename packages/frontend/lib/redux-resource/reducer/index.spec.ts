@@ -1,7 +1,7 @@
 import expect from 'expect';
-import reducer, { getReferenceResource } from './index';
-import { REGISTER_RESOURCE, UNREGISTER_RESOURCE } from '../../actions';
-import { CRUD_CHANGE_LIST_PARAMS } from '../../actions/listActions';
+import reducer from './index';
+import { REGISTER_RESOURCE, UNREGISTER_RESOURCE } from '../actions';
+import { CRUD_CHANGE_LIST_PARAMS } from '../actions';
 
 describe('Resources Reducer', () => {
     it('should return previous state if the action has no resource meta and is not REGISTER_RESOURCE nor UNREGISTER_RESOURCE', () => {
@@ -268,19 +268,6 @@ describe('Resources Reducer', () => {
                 },
                 props: { name: 'comments' },
             },
-        });
-    });
-
-    describe('getReferenceResource selector', () => {
-        it('should return the reference resource', () => {
-            const state = {
-                posts: 'POSTS',
-                comments: 'COMMENTS',
-            };
-            const props = {
-                reference: 'comments',
-            };
-            expect(getReferenceResource(state, props)).toEqual('COMMENTS');
         });
     });
 });

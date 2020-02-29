@@ -6,9 +6,9 @@ import {
     ToggleListItemAction,
     CRUD_DELETE_SUCCESS,
     CrudDeleteSuccessAction,
-} from '../../../actions';
-import { DELETE, DELETE_MANY } from '../../../actions/dataFetchActions';
-import { Identifier } from '../../../types';
+} from '../../actions';
+import { DELETE, DELETE_MANY } from '../../actions/dataFetchActions';
+import { Identifier } from '../../types';
 
 // @ts-ignore
 const initialState = [];

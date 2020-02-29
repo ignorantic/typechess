@@ -2,9 +2,10 @@ import { Store } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import thunk from 'redux-thunk';
-// import logger from 'redux-logger';
+import logger from 'redux-logger';
 import reducer from './rootReducer';
-import rootSaga from './rootSaga';
+import makeRootSaga from './makeRootSaga';
+import dataProvider from '../../data-provider';
 
 export interface ApplicationState {
   readonly auth: object;
@@ -16,7 +17,7 @@ function makeStore(preloadedState: ApplicationState): Store {
   const middleware = [
     saga,
     thunk,
-    // logger,
+    logger,
   ];
   const store = configureStore({
     reducer,
@@ -25,6 +26,8 @@ function makeStore(preloadedState: ApplicationState): Store {
     preloadedState,
     enhancers: [],
   });
+
+  const rootSaga = makeRootSaga(dataProvider);
 
   saga.run(rootSaga);
   return store;

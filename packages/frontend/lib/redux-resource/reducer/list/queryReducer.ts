@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { ListParams } from '../../../actions';
+import { ListParams } from '../../actions';
 export const SET_SORT = 'SET_SORT';
 export const SORT_ASC = 'ASC';
 export const SORT_DESC = 'DESC';

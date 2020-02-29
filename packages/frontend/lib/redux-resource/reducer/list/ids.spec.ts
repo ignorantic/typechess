@@ -2,8 +2,8 @@ import idsReducer from './ids';
 import {
     CRUD_GET_LIST_SUCCESS,
     CRUD_CREATE_SUCCESS,
-} from '../../../actions';
-import { DELETE, DELETE_MANY } from '../../../actions';
+} from '../../actions';
+import { DELETE, DELETE_MANY } from '../../actions';
 
 describe('ids reducer', () => {
     describe('DELETE', () => {

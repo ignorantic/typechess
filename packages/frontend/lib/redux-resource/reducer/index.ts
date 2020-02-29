@@ -3,7 +3,7 @@ import {
   RegisterResourceAction,
   UNREGISTER_RESOURCE,
   UnregisterResourceAction,
-} from '../../actions';
+} from '../actions';
 
 import data from './data';
 import list from './list';

@@ -9,13 +9,13 @@ import {
     CREATE,
     GET_ONE,
 } from '../../../core';
-import getFetchedAt from '../../util/getFetchedAt';
+import getFetchedAt from '../util/getFetchedAt';
 import dataReducer, {
     addRecordsAndRemoveOutdated,
     addRecords,
     addOneRecord,
 } from './data';
-import { FETCH_END } from '../../actions';
+import { FETCH_END } from '../actions';
 
 jest.mock('../../../util/getFetchedAt');
 

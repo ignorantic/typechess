@@ -6,9 +6,9 @@ import {
     CrudGetOneSuccessAction,
     CRUD_CREATE_SUCCESS,
     CrudCreateSuccessAction,
-} from '../../../actions';
-import { DELETE, DELETE_MANY } from '../../../actions';
-import { Identifier } from '../../../types';
+} from '../../actions';
+import { DELETE, DELETE_MANY } from '../../actions';
+import { Identifier } from '../../types';
 
 type IdentifierArray = Identifier[];
 
