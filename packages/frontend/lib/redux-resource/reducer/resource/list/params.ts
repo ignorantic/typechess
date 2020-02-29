@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import {
     CRUD_CHANGE_LIST_PARAMS,
     ChangeListParamsAction,
-} from '../../../../actions';
+} from '../../../actions';
 
 const defaultState = {
     sort: null,

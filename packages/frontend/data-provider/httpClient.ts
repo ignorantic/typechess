@@ -1,4 +1,4 @@
-import { fetchJson } from '../lib/typecore/fetch';
+import { fetchJson } from '../lib/redux-resource/fetch';
 
 type Options = {
   headers: Headers;

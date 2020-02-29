@@ -80,9 +80,10 @@ export function flattenObject<T, P>(value: T, path: Array<string> = []): T | {} 
   if (isValidObject(value)) {
     return Object.assign(
       {},
-      ...Object.keys(value).map((key: string) =>
+      ...Object.keys(value).map((key: string) => (
         // @ts-ignore
-        flattenObject(value[key], path.concat([key]))),
+        flattenObject(value[key], path.concat([key]))
+      )),
     );
   }
   return path.length ? { [path.join('.')]: value } : value;

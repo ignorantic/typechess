@@ -11,8 +11,8 @@ import {
 } from '@material-ui/core';
 
 import { compose } from 'redux';
-import { crudGetList } from '../../../lib/typecore/actions/dataActions';
-import { registerResource } from '../../../lib/typecore/actions';
+import { crudGetList } from '../../../lib/redux-resource/actions/dataActions';
+import { registerResource } from '../../../lib/redux-resource/actions';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -82,7 +82,7 @@ PositionsList.propTypes = propTypes;
 PositionsList.defaultProps = defaultProps;
 
 // @ts-ignore
-const selectResource = (state, name) => values(state?.admin?.resources[name]?.data);
+const selectResource = (state, name) => values(state?.resources[name]?.data);
 
 // @ts-ignore
 const mapStateToProps = (state) => ({

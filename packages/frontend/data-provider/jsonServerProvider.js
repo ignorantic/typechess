@@ -9,8 +9,8 @@ import {
   UPDATE_MANY,
   DELETE,
   DELETE_MANY,
-} from '../lib/typecore/actions/dataFetchActions';
-import { flattenObject } from '../lib/typecore/fetch';
+} from '../lib/redux-resource/actions/dataFetchActions';
+import { flattenObject } from '../lib/redux-resource/fetch';
 import { fetchify, sendify } from '../lib/tools';
 
 /**

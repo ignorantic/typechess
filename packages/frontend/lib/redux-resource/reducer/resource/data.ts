@@ -11,10 +11,10 @@ import {
   GET_ONE,
   UPDATE,
   UPDATE_MANY,
-} from '../../../actions';
+} from '../../actions';
 
-import getFetchedAt from '../../../util/getFetchedAt';
-import { Record, Identifier } from '../../../types';
+import getFetchedAt from '../../util/getFetchedAt';
+import { Record, Identifier } from '../../types';
 
 /**
  * A list of records indexed by id, together with their fetch dates

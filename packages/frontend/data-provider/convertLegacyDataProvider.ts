@@ -8,8 +8,8 @@ import {
     GET_ONE,
     UPDATE,
     UPDATE_MANY,
-} from '../lib/typecore/actions';
-import { LegacyDataProvider, DataProvider } from '../lib/typecore/types';
+} from '../lib/redux-resource/actions';
+import { LegacyDataProvider, DataProvider } from '../lib/redux-resource/types';
 
 const defaultDataProvider = () => Promise.resolve();
 defaultDataProvider.create = () => Promise.resolve(null);

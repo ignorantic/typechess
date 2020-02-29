@@ -1,7 +1,7 @@
 import expect from 'expect';
 import reducer, { getReferenceResource } from './index';
-import { REGISTER_RESOURCE, UNREGISTER_RESOURCE } from '../../../actions';
-import { CRUD_CHANGE_LIST_PARAMS } from '../../../actions/listActions';
+import { REGISTER_RESOURCE, UNREGISTER_RESOURCE } from '../../actions';
+import { CRUD_CHANGE_LIST_PARAMS } from '../../actions/listActions';
 
 describe('Resources Reducer', () => {
     it('should return previous state if the action has no resource meta and is not REGISTER_RESOURCE nor UNREGISTER_RESOURCE', () => {
