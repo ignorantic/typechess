@@ -9,8 +9,8 @@ import {
   UPDATE_MANY,
   DELETE,
   DELETE_MANY,
-} from '../lib/redux-resource/actions/dataFetchActions';
-import { flattenObject } from '../lib/redux-resource/util/fetch';
+  flattenObject,
+} from '../lib/redux-resource';
 import { fetchify, sendify } from '../lib/tools';
 
 /**

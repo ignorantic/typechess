@@ -1,6 +1,6 @@
 import { all } from 'redux-saga/effects';
 import { DataProvider } from '../types';
-import fetch from './fetch';
+import fetchSaga from './fetchSaga';
 
 /**
  * @param {Object} dataProvider A Data Provider function
@@ -13,7 +13,7 @@ export default (
   yield all([
     // auth(authProvider)(),
     // undo(),
-    fetch(dataProvider)(),
+    fetchSaga(dataProvider)(),
     // accumulate(),
     // redirection(),
     // refresh(),

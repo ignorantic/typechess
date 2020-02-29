@@ -11,8 +11,7 @@ import {
 } from '@material-ui/core';
 
 import { compose } from 'redux';
-import { crudGetList } from '../../../lib/redux-resource/actions/dataActions';
-import { registerResource } from '../../../lib/redux-resource/actions';
+import { crudGetList, registerResource } from '../../../lib/redux-resource';
 
 const useStyles = makeStyles(() => ({
   root: {

@@ -3,7 +3,6 @@ import {
   call,
   cancelled,
   put,
-  select,
   takeEvery,
 } from 'redux-saga/effects';
 import { DataProvider } from '../types';
@@ -101,15 +100,6 @@ export function* handleFetch(
   const failureSideEffects = onFailure instanceof Function ? {} : onFailure;
 
   try {
-    // const isOptimistic = yield select(
-    //     //
-    // );
-    // if (isOptimistic) {
-    //     // in optimistic mode, all fetch actions are canceled,
-    //     // so the admin uses the store without synchronization
-    //     return;
-    // }
-
     yield all([
       put({ type: `${type}_LOADING`, payload, meta }),
       put({ type: FETCH_START }),
@@ -158,8 +148,8 @@ export function* handleFetch(
 // @ts-ignore
 export const takeFetchAction = (action) => action.meta && action.meta.fetch;
 
-const fetch = (dataProvider: DataProvider) => function* watchFetch() {
+const fetchSaga = (dataProvider: DataProvider) => function* watchFetch() {
   yield takeEvery(takeFetchAction, handleFetch, dataProvider);
 };
 
-export default fetch;
+export default fetchSaga;
