@@ -2,7 +2,7 @@ import { Store } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import thunk from 'redux-thunk';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 import reducer from './rootReducer';
 import rootSaga from './rootSaga';
 
@@ -13,7 +13,11 @@ export interface ApplicationState {
 
 function makeStore(preloadedState: ApplicationState): Store {
   const saga = createSagaMiddleware();
-  const middleware = [saga, thunk, logger];
+  const middleware = [
+    saga,
+    thunk,
+    // logger,
+  ];
   const store = configureStore({
     reducer,
     middleware,

@@ -51,7 +51,6 @@ const propTypes = {
 
 const Board: FC<BoardProps> = (props: BoardProps) => {
   const { position, onSelect, onMove } = props;
-
   const mapFile = mapIndexed((square: BoardSquare, rank: number, file: number): JSX.Element => {
     const { piece, color } = square;
     const style = {

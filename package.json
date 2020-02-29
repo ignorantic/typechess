@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "dev": "lerna run --parallel dev"
+  },
   "devDependencies": {
     "@nestjs/cli": "^6.13.2",
     "@nestjs/schematics": "^6.8.1",
