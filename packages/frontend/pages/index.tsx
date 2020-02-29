@@ -5,15 +5,15 @@ interface HomeProps {
   userAgent?: string;
 }
 
-const Home: NextPage<HomeProps> = () => (
+const HomePage: NextPage<HomeProps> = () => (
   <Main />
 );
 
-Home.getInitialProps = async (
+HomePage.getInitialProps = async (
   { req }: NextPageContext,
-): Promise<HomeProps> => { // eslint-disable-line @typescript-eslint/require-await
+): Promise<HomeProps> => {
   const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
   return { userAgent };
 };
 
-export default Home;
+export default HomePage;
