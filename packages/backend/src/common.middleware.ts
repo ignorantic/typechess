@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 export class CountMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: Function) {
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
+    res.header('Content-Type', 'application/json');
     next();
   }
 }
