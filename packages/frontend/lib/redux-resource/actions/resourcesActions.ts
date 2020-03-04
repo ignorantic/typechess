@@ -3,11 +3,6 @@ export const REGISTER_RESOURCE = 'RA/REGISTER_RESOURCE';
 export interface ResourceDefinition {
     readonly name: string;
     readonly options?: any;
-    readonly hasList?: boolean;
-    readonly hasEdit?: boolean;
-    readonly hasShow?: boolean;
-    readonly hasCreate?: boolean;
-    readonly icon?: any;
 }
 
 export interface RegisterResourceAction {
@@ -16,10 +11,10 @@ export interface RegisterResourceAction {
 }
 
 export const registerResource = (
-    resource: ResourceDefinition
+  resource: ResourceDefinition,
 ): RegisterResourceAction => ({
-    type: REGISTER_RESOURCE,
-    payload: resource,
+  type: REGISTER_RESOURCE,
+  payload: resource,
 });
 
 export const UNREGISTER_RESOURCE = 'RA/UNREGISTER_RESOURCE';
@@ -30,8 +25,8 @@ export interface UnregisterResourceAction {
 }
 
 export const unregisterResource = (
-    resourceName: string
+  resourceName: string,
 ): UnregisterResourceAction => ({
-    type: UNREGISTER_RESOURCE,
-    payload: resourceName,
+  type: UNREGISTER_RESOURCE,
+  payload: resourceName,
 });

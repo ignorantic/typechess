@@ -2,13 +2,20 @@ import { Store } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import thunk from 'redux-thunk';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 import reducer from './rootReducer';
 import makeRootSaga from './makeRootSaga';
 import dataProvider from '../../data-provider';
 
+interface Resource {
+  props: {[key: string]: object | string | boolean};
+  data: {[key: number]: object};
+  list: {[key: string]: object | number[] | number | boolean};
+}
+
 export interface ApplicationState {
   readonly auth: object;
+  readonly resources: {[key: string]: Resource};
   readonly game: object;
 }
 
@@ -17,7 +24,7 @@ function makeStore(preloadedState: ApplicationState): Store {
   const middleware = [
     saga,
     thunk,
-    logger,
+    // logger,
   ];
   const store = configureStore({
     reducer,

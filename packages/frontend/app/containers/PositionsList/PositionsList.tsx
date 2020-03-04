@@ -46,10 +46,6 @@ const PositionsList: FC<PositionsListContainerProps> = (props) => {
       registerResource({
         name: 'positions',
         options: {},
-        hasList: true,
-        hasEdit: false,
-        hasShow: false,
-        hasCreate: false,
       }),
     );
     dispatch(

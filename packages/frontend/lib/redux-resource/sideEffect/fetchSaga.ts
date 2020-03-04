@@ -55,6 +55,7 @@ function validateResponseFormat(
   }
   if (
     fetchActionsWithRecordResponse.includes(type)
+    // eslint-disable-next-line no-prototype-builtins
     && !response.data.hasOwnProperty('id')
   ) {
     logger(

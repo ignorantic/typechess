@@ -1,5 +1,5 @@
 import { NextPage, NextPageContext } from 'next';
-import PositionsList from '../app/containers/PositionsList';
+import PositionsList from '../../app/containers/PositionsList';
 
 interface PositionsListProps {
   userAgent?: string;

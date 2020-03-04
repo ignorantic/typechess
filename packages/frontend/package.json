@@ -26,7 +26,7 @@
     "@types/keymirror": "^0.1.1",
     "@types/lodash": "^4.14.149",
     "@types/ramda": "^0.26.39",
-    "@types/react-redux": "^7.1.5",
+    "@types/react-redux": "^7.1.7",
     "@types/redux-logger": "^3.0.7",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@zeit/next-sass": "^1.0.1",
