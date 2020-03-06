@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { connect, useDispatch } from 'react-redux';
 import { values } from 'ramda';
+import { crudGetList, registerResource } from 'redux-resourcify';
 
 // components
 import {
@@ -11,8 +12,6 @@ import {
 } from '@material-ui/core';
 
 import { compose } from 'redux';
-import { crudGetList } from '../../../lib/typecore/actions/dataActions';
-import { registerResource } from '../../../lib/typecore/actions';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -47,10 +46,6 @@ const PositionsList: FC<PositionsListContainerProps> = (props) => {
       registerResource({
         name: 'positions',
         options: {},
-        hasList: true,
-        hasEdit: false,
-        hasShow: false,
-        hasCreate: false,
       }),
     );
     dispatch(
@@ -82,7 +77,7 @@ PositionsList.propTypes = propTypes;
 PositionsList.defaultProps = defaultProps;
 
 // @ts-ignore
-const selectResource = (state, name) => values(state?.admin?.resources[name]?.data);
+const selectResource = (state, name) => values(state?.resources[name]?.data);
 
 // @ts-ignore
 const mapStateToProps = (state) => ({

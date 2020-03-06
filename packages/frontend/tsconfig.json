@@ -1,9 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "parser": "@typescript-eslint/parser",
   "compilerOptions": {
-    "module": "esnext",
     "target": "es5",
-    "sourceMap": true,
     "strict": true,
     "lib": [
       "dom",
@@ -18,7 +17,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "module": "esnext"
   },
   "exclude": [
     "node_modules"
