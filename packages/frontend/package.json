@@ -1,6 +1,6 @@
 {
   "name": "typechess-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Chess with typescript!",
   "main": "index.js",
   "author": "Andrii Sorokin",
