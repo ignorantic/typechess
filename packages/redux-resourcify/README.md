@@ -1,11 +1,5 @@
 # `redux-resourcify`
 
-> TODO: description
+It is a work in progress project to create a CRUD reducer for REST API.
 
-## Usage
-
-```
-const reduxResourcify = require('redux-resourcify');
-
-// TODO: DEMONSTRATE API
-```
+Inspired by [react-admin](https://github.com/marmelab/react-admin).
