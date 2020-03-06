@@ -1,0 +1,49 @@
+{
+  "name": "redux-resourcify",
+  "version": "0.0.0",
+  "description": "CRUD reducer for REST API",
+  "keywords": [
+    "redux"
+  ],
+  "author": "Andrii Sorokin <ansolaris@gmail.com>",
+  "homepage": "https://github.com/ignorantic/redux-resourcify#README",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ignorantic/redux-resourcify.git"
+  },
+  "scripts": {
+    "test": "jest",
+    "type-check": "tsc src/**/*.ts --noEmit --esModuleInterop",
+    "type-check:watch": "yarn type-check -- --watch",
+    "build": "yarn build:js",
+    "build:types": "tsc src --emitDeclarationOnly --outDir lib",
+    "build:js": "tsc --rootDir src --outDir lib --esModuleInterop"
+  },
+  "bugs": {
+    "url": "https://github.com/ignorantic/redux-resourcify/issues"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "babel-jest": "^25.1.0",
+    "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/lodash": "^4.14.149",
+    "@types/query-string": "^6.3.0",
+    "@types/redux": "^3.6.0",
+    "@types/redux-saga": "^0.10.5",
+    "lodash": "^4.17.15",
+    "query-string": "^6.11.1",
+    "redux": "^4.0.5",
+    "typescript": "^3.8.3"
+  }
+}
