@@ -1,9 +1,10 @@
 {
   "name": "typechess-api",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "",
   "author": "Andrii Sorokin",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",

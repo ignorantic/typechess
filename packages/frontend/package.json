@@ -1,10 +1,11 @@
 {
   "name": "typechess-client",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Chess with typescript!",
   "main": "index.js",
   "author": "Andrii Sorokin",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "test": "NODE_ENV=test jest",
     "build": "next build",
