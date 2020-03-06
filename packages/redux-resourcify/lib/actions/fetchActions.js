@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FETCH_START = 'RA/FETCH_START';
+exports.fetchStart = () => ({ type: exports.FETCH_START });
+exports.FETCH_END = 'RA/FETCH_END';
+exports.fetchEnd = () => ({ type: exports.FETCH_END });
+exports.FETCH_ERROR = 'RA/FETCH_ERROR';
+exports.fetchError = () => ({ type: exports.FETCH_ERROR });
+exports.FETCH_CANCEL = 'RA/FETCH_CANCEL';
+exports.fetchCancel = () => ({ type: exports.FETCH_CANCEL });

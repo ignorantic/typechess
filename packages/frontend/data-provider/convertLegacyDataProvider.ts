@@ -10,7 +10,7 @@ import {
   UPDATE_MANY,
   LegacyDataProvider,
   DataProvider,
-} from '../lib/redux-resource';
+} from 'redux-resourcify';
 
 const defaultDataProvider = () => Promise.resolve();
 defaultDataProvider.create = () => Promise.resolve(null);

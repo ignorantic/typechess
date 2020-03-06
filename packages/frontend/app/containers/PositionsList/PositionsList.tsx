@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { connect, useDispatch } from 'react-redux';
 import { values } from 'ramda';
+import { crudGetList, registerResource } from 'redux-resourcify';
 
 // components
 import {
@@ -11,7 +12,6 @@ import {
 } from '@material-ui/core';
 
 import { compose } from 'redux';
-import { crudGetList, registerResource } from '../../../lib/redux-resource';
 
 const useStyles = makeStyles(() => ({
   root: {

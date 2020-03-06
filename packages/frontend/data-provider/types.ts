@@ -1,4 +1,4 @@
 export type ListResponse = {
-  data: object[],
-  total: number,
+  data: object[];
+  total: number;
 };

@@ -3,14 +3,13 @@ import React, { FC, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { connect, useDispatch } from 'react-redux';
+import { compose } from 'redux';
+import { crudGetOne, registerResource } from 'redux-resourcify';
 
 // components
 import {
   Container, List, ListItem, ListItemText,
 } from '@material-ui/core';
-
-import { compose } from 'redux';
-import { crudGetOne, registerResource } from '../../../lib/redux-resource';
 import { ApplicationState } from '../../store/makeStore';
 
 const useStyles = makeStyles(() => ({
